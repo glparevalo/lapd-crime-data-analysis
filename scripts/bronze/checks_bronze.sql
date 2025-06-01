@@ -3,7 +3,7 @@
 					Checks Bronze: Check the Bronze Table
 =============================================================================
 
-Normalization Table:
+Bronze Table:
 	This script is used to check the bronze table: what the initial data 
     quality looks like. It is also helpful for arranging a game plan and 
     learning immediate insights. 
