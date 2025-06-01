@@ -12,13 +12,13 @@ Normalization Table:
 	* It uses the bulk insert command to load data from csv files
 	
 How to Use:
-	EXEC bronze.load_normalization;
+	EXEC bronze.load_bronze;
 
 =============================================================================
 */
 
 
-CREATE OR ALTER PROCEDURE bronze.load_normalization AS
+CREATE OR ALTER PROCEDURE bronze.load_bronze AS
 BEGIN
     DECLARE @start_time datetime, @end_time datetime;
     BEGIN TRY
@@ -59,4 +59,4 @@ END;
 
 GO
 
-exec bronze.load_normalization
+exec bronze.load_bronze
