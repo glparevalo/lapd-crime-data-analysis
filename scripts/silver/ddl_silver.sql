@@ -3,12 +3,13 @@
 					DDL Silver: Create the Silver Table
 =============================================================================
 
-Normalization Table:
+Silver Flat Table:
 	This script is used to create the silver table which consists of the  
 	cleaned data of the LAPD Crime Dataset. This table is used to transform
-	and normalize the dataset, making it ready for business-ready data. This 
-	script drops the table if it already exists in the database then creates 
-	a new one.
+	and normalize the dataset to make it business-ready. This script drops 
+	the table if it already exists in the database then creates a new one.
+
+=============================================================================
 */
 
 IF OBJECT_ID('silver.lapd_crime_database', 'U') IS NOT NULL
