@@ -5,19 +5,20 @@
 ============================================================================
 
 Database:
-	This script is used to create a database named "lapd_crime_db".
+	This script is used to create a database named "lapd_crime_database"
 	The script checks first if the database exists. If so, the database 
 	is dropped and recreated. 
 
 Schemas:
 	The schemas created are bronze, silver, and gold. 
 
+=============================================================================
 */
 
 USE master;
 GO
 
--- Drop then recreate the "lapd_crime_db" database
+-- Drop then recreate the "lapd_crime_database" database
 
 IF EXISTS (SELECT 1 FROM sys.databases where name = 'lapd_crime_database')
 BEGIN
@@ -34,9 +35,6 @@ GO
 -- Create schemas
 
 USE lapd_crime_database;
-GO
-
-CREATE SCHEMA normalization;
 GO
 
 CREATE SCHEMA bronze;
