@@ -9,8 +9,13 @@ Silver Flat Table:
 	and normalize the dataset to make it business-ready. This script drops 
 	the table if it already exists in the database then creates a new one.
 
+3NF Tables:
+	After normalizing, this script also creates the split tables.
+
 =============================================================================
 */
+
+-- Silver LAPD Crime Database
 
 IF OBJECT_ID('silver.lapd_crime_database', 'U') IS NOT NULL
 	DROP TABLE silver.lapd_crime_database;
@@ -20,7 +25,7 @@ CREATE TABLE silver.lapd_crime_database (
 	dr_no					INT,
 	date_reported			DATE,
 	date_occurred			DATE,
-	time_occurred			TIME,
+	time_occurred			TIME(0),
 	area					INT,
 	area_name				NVARCHAR(150),
 	report_district_no		INT,
@@ -44,3 +49,130 @@ CREATE TABLE silver.lapd_crime_database (
 	crime_lat				FLOAT,
 	crime_lon				FLOAT
 );
+
+GO
+
+/*
+==========================================================
+						3NF Tables 
+==========================================================
+
+*/
+
+-- Crime Setting
+
+IF OBJECT_ID('silver.crime_setting', 'U') IS NOT NULL
+	DROP TABLE silver.crime_setting;
+GO
+
+CREATE TABLE silver.crime_setting (
+	dr_no					INT,
+	date_reported			DATE,
+	date_occurred			DATE,
+	time_occurred			TIME(0), 
+	area					INT,
+	premis_cd				INT
+);
+
+IF OBJECT_ID('silver.area_table', 'U') IS NOT NULL
+	DROP TABLE silver.area_table;
+GO
+
+CREATE TABLE silver.area_table (
+	area					INT,
+	area_name				NVARCHAR(150),
+	report_district_no		INT,
+);
+
+GO
+
+IF OBJECT_ID('silver.premise_table', 'U') IS NOT NULL
+	DROP TABLE silver.premise_table;
+GO
+
+CREATE TABLE silver.premise_table (
+	premis_cd				INT,
+	premis_desc				NVARCHAR(150),
+	crime_location			NVARCHAR(150),
+	cross_street			NVARCHAR(150),
+	crime_lat				FLOAT,
+	crime_lon				FLOAT
+);
+
+GO
+
+-- Crime Method
+
+IF OBJECT_ID('silver.crime_method', 'U') IS NOT NULL
+	DROP TABLE silver.crime_method;
+GO
+
+CREATE TABLE silver.crime_method (
+	dr_no					INT,
+	part					INT,
+	crime_cd				INT,
+	weapon_used_cd			INT,
+);
+
+GO
+
+IF OBJECT_ID('silver.crime_table', 'U') IS NOT NULL
+	DROP TABLE silver.crime_table;
+GO
+
+CREATE TABLE silver.crime_table (
+	crime_cd				INT,
+	crime_desc				NVARCHAR(150)
+);
+
+GO
+
+IF OBJECT_ID('silver.weapon_table', 'U') IS NOT NULL
+	DROP TABLE silver.weapon_table;
+GO
+
+CREATE TABLE silver.weapon_table (
+	weapon_used_cd			INT,
+	weapon_used_desc		NVARCHAR(150)
+);
+
+GO
+
+-- Crime Victim Profile
+
+IF OBJECT_ID('silver.crime_victim_profile', 'U') IS NOT NULL
+	DROP TABLE silver.crime_victim_profile;
+GO
+
+CREATE TABLE silver.crime_victim_profile (
+	dr_no					INT,
+	vict_age				INT,
+	vict_sex				NVARCHAR(150),
+	vict_descent			NVARCHAR(150),
+);
+
+GO
+
+IF OBJECT_ID('silver.victim_table', 'U') IS NOT NULL
+	DROP TABLE silver.victim_table;
+GO
+
+CREATE TABLE silver.victim_table (
+	vict_descent			NVARCHAR(150),
+	vict_descent_desc		NVARCHAR(150),
+);
+
+GO
+
+-- Crime Case Status
+
+IF OBJECT_ID('silver.crime_case_status', 'U') IS NOT NULL
+	DROP TABLE silver.crime_case_status;
+GO
+
+CREATE TABLE silver.crime_case_status (
+	status_cd				NVARCHAR(150),
+	dr_no					INT,
+	status_desc				NVARCHAR(150)
+);
+
