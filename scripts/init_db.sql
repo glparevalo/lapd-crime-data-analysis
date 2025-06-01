@@ -36,6 +36,9 @@ GO
 USE lapd_crime_database;
 GO
 
+CREATE SCHEMA normalization;
+GO
+
 CREATE SCHEMA bronze;
 GO
 
