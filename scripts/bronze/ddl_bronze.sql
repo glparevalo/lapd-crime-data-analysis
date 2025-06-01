@@ -1,22 +1,22 @@
 /* 
 =============================================================================
-		      DDL Normalization: Create the Normalization Table
+		      		DDL Bronze: Create the Bronze Table
 =============================================================================
 
-Normalization Table:
-	This script is used to create the normalization table which consists of 
-	the raw data of the LAPD Crime Dataset. This table is used as a basis to
+Bronze Table:
+	This script is used to create the Bronze table which consists of the raw 
+	data of the LAPD Crime Dataset. This table is used as a basis to
 	create views that will help normalize the dataset. This script drops 
 	the table if it already exists then creates a new one.
 
 =============================================================================
 */
 
-IF OBJECT_ID('normalization.lapd_crime_database', 'U') IS NOT NULL
-	DROP TABLE normalization.lapd_crime_database;
+IF OBJECT_ID('bronze.lapd_crime_database', 'U') IS NOT NULL
+	DROP TABLE bronze.lapd_crime_database;
 GO
 
-CREATE TABLE normalization.lapd_crime_database (
+CREATE TABLE bronze.lapd_crime_database (
 	dr_no					INT,
 	date_reported			datetime,
 	date_occurred			date,
