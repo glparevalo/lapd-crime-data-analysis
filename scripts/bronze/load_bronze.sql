@@ -3,7 +3,7 @@
 						Loading the Bronze Table
 =============================================================================
 
-Normalization Table:
+Bronze Table:
 	This script is used to create or alter a stored procedure that will 
 	insert data into the Bronze table which consists of the raw data 
 	of the LAPD Crime Dataset. 
