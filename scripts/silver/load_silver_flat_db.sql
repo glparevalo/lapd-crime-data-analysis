@@ -194,30 +194,133 @@ create or alter PROCEDURE silver.load_silver_normalized_db as
     from silver.lapd_crime_database
 	order bY premis_cd
 
-
-    TRUNCATE TABLE silver.crime_setting;
-    insert into silver.crime_setting(
-        dr_no,
-        date_reported,
-        date_occurred,
-        time_occurred,
-        area,
-        sk_location_key
+    -- Load Weapon Table
+    truncate table silver.weapon_table
+    insert into silver.weapon_table(
+        weapon_used_cd,
+        weapon_used_desc
     )
 
-    select 
-        m.dr_no,
-        m.date_reported,
-        date_occurred,
-        time_occurred,
-        area,
-        l.sk_location_key
-    from silver.lapd_crime_database m
-    left join silver.location_table l
-    on m.premis_cd = l.premis_cd
-    and m.crime_location = l.crime_location
-    and m.crime_lat = l.crime_lat
-    and m.crime_lon = l.crime_lon
+    select distinct
+        weapon_used_cd,
+        weapon_desc
+
+    from
+    silver.lapd_crime_database
+    order by weapon_used_cd
+
+    select * from silver.weapon_table
+
+    -- Load Crime Table
+    insert into silver.crime_table(
+        crime_cd,
+        crime_desc
+    )
+    select distinct 
+        crime_cd,
+        crime_cd_desc
+    from silver.lapd_crime_database
+    order by crime_cd;
+
+    -- Load Crime Method Table
+    truncate table silver.crime_method
+
+    insert into silver.crime_method(
+        sk_crime_method_key,
+        part,
+        crime_cd,
+        weapon_used_cd
+    )
+
+    select
+        row_number() over (order by part, crime_cd, weapon_used_cd) as sk_crime_method_key,
+        part, crime_cd, weapon_used_cd from (
+
+    select distinct
+        part,
+        crime_cd,
+        weapon_used_cd
+    from silver.lapd_crime_database
+    ) t
+
+    order by row_number() over (order by part, crime_cd, weapon_used_cd)
+
+    -- Load Crime Victim Profile
+    INSERT INTO silver.crime_victim_profile(
+        profile_id,
+        vict_age,
+        vict_sex,
+        vict_descent
+    )
+
+    select
+        ROW_NUMBER() over (order by vict_age, vict_sex, vict_descent) as profile_id,
+        vict_age,
+        vict_sex,
+        vict_descent
+    from (
+
+    select distinct
+        vict_age,
+        vict_sex,
+        vict_descent
+    from silver.lapd_crime_database
+    ) t
+
+    order by profile_id
+
+    -- Load Status Table
+    INSERT INTO silver.status_table(
+	status_cd,
+	status_desc
+    )
+
+    select distinct
+        status_cd,
+        status_desc
+    from silver.lapd_crime_database
+
+    -- Load Crime Status
+    insert into silver.crime_status(
+        sk_crime_status_key,
+        report_district_no,
+        status_cd
+    )
+    select
+        row_number() over (order by report_district_no, status_cd) as sk_crime_status_key,
+        report_district_no,
+        status_cd
+    from(
+    select distinct
+        report_district_no,
+        status_cd
+    from silver.lapd_crime_database
+    )a
+
+
+    -- TRUNCATE TABLE silver.crime_setting;
+    -- insert into silver.crime_setting(
+    --     dr_no,
+    --     date_reported,
+    --     date_occurred,
+    --     time_occurred,
+    --     area,
+    --     sk_location_key
+    -- )
+
+    -- select 
+    --     m.dr_no,
+    --     m.date_reported,
+    --     date_occurred,
+    --     time_occurred,
+    --     area,
+    --     l.sk_location_key
+    -- from silver.lapd_crime_database m
+    -- left join silver.location_table l
+    -- on m.premis_cd = l.premis_cd
+    -- and m.crime_location = l.crime_location
+    -- and m.crime_lat = l.crime_lat
+    -- and m.crime_lon = l.crime_lon
 
     /*
     ========================================================

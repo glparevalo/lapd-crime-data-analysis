@@ -120,12 +120,12 @@ IF OBJECT_ID('silver.crime_method', 'U') IS NOT NULL
 	DROP TABLE silver.crime_method;
 GO
 
-CREATE TABLE silver.crime_method (
-	dr_no					INT,
-	part					INT,
-	crime_cd				INT,
-	weapon_used_cd			INT,
-);
+create table silver.crime_method(
+	sk_crime_method_key		int primary key,
+	part 					int,
+	crime_cd 				int,
+	weapon_used_cd 			int
+)
 
 GO
 
@@ -160,7 +160,7 @@ IF OBJECT_ID('silver.crime_victim_profile', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.crime_victim_profile (
-	dr_no					INT,
+	dr_no					INT PRIMARY KEY,
 	vict_age				INT,
 	vict_sex				NVARCHAR(150),
 	vict_descent			NVARCHAR(150),
@@ -181,13 +181,23 @@ GO
 
 -- Crime Case Status
 
-IF OBJECT_ID('silver.crime_case_status', 'U') IS NOT NULL
-	DROP TABLE silver.crime_case_status;
+IF OBJECT_ID('silver.crime_status', 'U') IS NOT NULL
+	DROP TABLE silver.crime_status;
 GO
 
-CREATE TABLE silver.crime_case_status (
-	status_cd				NVARCHAR(150),
-	dr_no					INT,
-	status_desc				NVARCHAR(150)
-);
+create table silver.crime_status(
+	sk_crime_status_key		INT PRIMARY KEY,
+	report_district_no		INT,
+	status_cd				NVARCHAR(150)
+)
+
+-- Create Status Table
+IF OBJECT_ID('silver.status_table', 'U') IS NOT NULL
+	DROP TABLE silver.status_table;
+GO
+
+create table silver.status_table(
+	status_cd	NVARCHAR(150) PRIMARY KEY,
+	status_desc	NVARCHAR(150)
+)
 
