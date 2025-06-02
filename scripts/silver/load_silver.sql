@@ -255,7 +255,7 @@ BEGIN
             vict_descent_desc
         )
         SELECT DISTINCT 
-            crime_cd, 
+            vict_descent, 
 			CASE UPPER(TRIM(vict_descent))
 				WHEN 'A' THEN 'Other Asian'
 				WHEN 'B' THEN 'Black'
@@ -279,7 +279,7 @@ BEGIN
 				ELSE 'Uncategorized'
 			END AS vict_descent_desc
         FROM silver.lapd_crime_database
-        ORDER BY crime_cd;
+        ORDER BY vict_descent;
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
