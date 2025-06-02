@@ -170,11 +170,11 @@ create or alter PROCEDURE silver.load_silver_normalized_db as
     TRUNCATE TABLE silver.area_table;
 
     INSERT INTO silver.area_table(
-        area,
+        area_id,
         area_name
     )
     select distinct
-        area,
+        area_id,
         area_name
     from silver.lapd_crime_database
     order by area;
@@ -247,7 +247,7 @@ create or alter PROCEDURE silver.load_silver_normalized_db as
 
     -- Load Crime Victim Profile
     INSERT INTO silver.crime_victim_profile(
-        profile_id,
+        sk_victim_profile_key,
         vict_age,
         vict_sex,
         vict_descent
@@ -281,6 +281,7 @@ create or alter PROCEDURE silver.load_silver_normalized_db as
     from silver.lapd_crime_database
 
     -- Load Crime Status
+    TRUNCATE TABLE silver.crime_status;
     insert into silver.crime_status(
         sk_crime_status_key,
         report_district_no,
@@ -295,32 +296,54 @@ create or alter PROCEDURE silver.load_silver_normalized_db as
         report_district_no,
         status_cd
     from silver.lapd_crime_database
-    )a
+    )a;
 
+    GO
 
-    -- TRUNCATE TABLE silver.crime_setting;
-    -- insert into silver.crime_setting(
-    --     dr_no,
-    --     date_reported,
-    --     date_occurred,
-    --     time_occurred,
-    --     area,
-    --     sk_location_key
-    -- )
+    -- Load Crime Setting
+    TRUNCATE TABLE silver.crime_setting;
+    insert into silver.crime_setting (
+        dr_no,
+        date_reported,
+        date_occurred,
+        time_occurred,
+        area_id,
+        sk_location_key,
+        sk_crime_method_key,
+        sk_victim_profile_key,
+        sk_crime_status_key
+    )
 
-    -- select 
-    --     m.dr_no,
-    --     m.date_reported,
-    --     date_occurred,
-    --     time_occurred,
-    --     area,
-    --     l.sk_location_key
-    -- from silver.lapd_crime_database m
-    -- left join silver.location_table l
-    -- on m.premis_cd = l.premis_cd
-    -- and m.crime_location = l.crime_location
-    -- and m.crime_lat = l.crime_lat
-    -- and m.crime_lon = l.crime_lon
+    select
+        m.dr_no,
+        m.date_reported,
+        m.date_occurred,
+        m.time_occurred,
+        m.area_id,
+        l.sk_location_key,
+        c.sk_crime_method_key,
+        v.sk_victim_profile_key,
+        s.sk_crime_status_key
+    from silver.lapd_crime_database m
+    left join silver.location_table l
+        on m.premis_cd = l.premis_cd
+        and m.crime_location = l.crime_location
+        and m.crime_lat = l.crime_lat
+        and m.crime_lon = l.crime_lon
+
+    left join silver.crime_method c
+        on m.part = c.part
+        and m.crime_cd = c.crime_cd
+        and m.weapon_used_cd = c.weapon_used_cd
+
+    left join silver.crime_victim_profile v
+        on m.vict_age = v.vict_age
+        and m.vict_sex = v.vict_sex
+        and m.vict_descent = v.vict_descent
+
+    left join silver.crime_status s
+        on m.status_cd = s.status_cd
+        and m.report_district_no = s.report_district_no
 
     /*
     ========================================================
