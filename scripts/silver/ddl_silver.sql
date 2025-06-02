@@ -160,7 +160,7 @@ IF OBJECT_ID('silver.crime_victim_profile', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.crime_victim_profile (
-	dr_no					INT PRIMARY KEY,
+	sk_victim_profile_key	INT PRIMARY KEY,
 	vict_age				INT,
 	vict_sex				NVARCHAR(150),
 	vict_descent			NVARCHAR(150),
