@@ -313,6 +313,36 @@ BEGIN
         PRINT 'Completed silver.crime_method in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
 
         -- ================================================
+        --            Load Part Table
+        -- ================================================
+        PRINT 'Starting load: silver.part_table';
+        SET @section_start_time = GETDATE();
+
+        TRUNCATE TABLE silver.part_table;
+        INSERT INTO silver.part_table (
+            part,
+	        part_name,
+	        category
+        )
+        SELECT DISTINCT 
+            part,
+            CASE	
+                WHEN part = 1 THEN 'Part I Crimes'
+                WHEN part = 2 THEN 'Part II Crimes'
+                ELSE 'N/A'
+            END AS part_name,
+            CASE	
+                WHEN part = 1 THEN 'Serious Index Crime'
+                WHEN part = 2 THEN 'Other / Non-Index Crime'
+                ELSE 'Uncategorized'
+            END AS category
+        FROM silver.lapd_crime_database
+
+        SET @section_end_time = GETDATE();
+        PRINT 'Completed silver.crime_method in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+
+
+        -- ================================================
         --          Load Crime Victim Profile
         -- ================================================
         PRINT 'Starting load: silver.crime_victim_profile';
