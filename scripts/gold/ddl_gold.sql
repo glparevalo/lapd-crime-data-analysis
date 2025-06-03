@@ -69,4 +69,22 @@ from silver.crime_victim_profile m
 left join silver.victim_table v
 on m.vict_descent = v.vict_descent
 
+-- fact crime event
+
+create view gold.fact_crime_event as 
+
+select
+	row_number() over (order by dr_no, date_reported) as crime_key,
+	m.dr_no,
+	m.date_reported,
+	m.date_occurred,
+	m.time_occurred,
+	a.area_name as area,
+	m.sk_location_key as location_key,
+	m.sk_crime_method_key as method_key,
+	m.sk_victim_profile_key as victim_profile_key,
+	m.sk_crime_status_key as status_key
+from silver.crime_setting m
+left join silver.area_table a
+on m.area_id = a.area_id
 
