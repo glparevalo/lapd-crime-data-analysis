@@ -1,90 +1,126 @@
--- method
-create view gold.dim_method as
+/*
+=============================================================================
+						 DDL Gold: Create Gold Views
+=============================================================================
 
-select
-	m.sk_crime_method_key as method_key,
-	p.part_name as part,
-	p.category,
-	c.crime_desc as crime,
-	w.weapon_used_desc as weapon_used
-from silver.crime_method as m
-left join silver.crime_table as c
-on m.crime_cd = c.crime_cd
+Creating the Gold Views:
+	This script is used to create views using the normalized silver tables 
+	for the Gold later. This layer consists of the fact table and dimension
+	tables configured in a Star Schema.
 
-left join silver.weapon_table as w
-on m.weapon_used_cd = w.weapon_used_cd
+	Each view has a transformation that allows for an understandable, usable,
+	and clean data for business users and analysts.
 
-left join silver.part_table p
-on m.part = p.part
+Example usage:
+	Query "SELECT * FROM gold.dim_method" to see the method-related view.
+	The views can also be joined to other tables via the fact table.
+
+=============================================================================
+*/
 
 
-select
-	m.sk_location_key as location_key,
-	p.premis_desc as premise,
-	m.crime_location,
-	m.crime_lat,
-	m.crime_lon,
-	
-from silver.location_table as m
-left join silver.premis_table as p
-on m.premis_cd = p.premis_cd
+-- ============================================
+--				DIMENSION: Method
+-- ============================================
 
--- status
-create view gold.dim_status as
+IF OBJECT_ID('gold.dim_method', 'V') IS NOT NULL
+    DROP VIEW gold.dim_method;
+GO
 
-select 
-	m.sk_crime_status_key as status_key,
-	m.report_district_no as reporting_district_number,
-	s.status_desc as status
-from silver.crime_status m
-left join silver.status_table s
-on m.status_cd = s.status_cd
+CREATE VIEW gold.dim_method AS
+SELECT
+    m.sk_crime_method_key AS method_key,
+    p.part_name AS part,
+    p.category AS part_category,
+    c.crime_desc AS crime,
+    w.weapon_used_desc AS weapon_used
+FROM silver.crime_method AS m
+LEFT JOIN silver.crime_table AS c
+    ON m.crime_cd = c.crime_cd
+LEFT JOIN silver.weapon_table AS w
+    ON m.weapon_used_cd = w.weapon_used_cd
+LEFT JOIN silver.part_table AS p
+    ON m.part = p.part;
+GO
 
-select * from gold.dim_status
+-- ============================================
+--				DIMENSION: Status
+-- ============================================
 
--- location
+IF OBJECT_ID('gold.dim_status', 'V') IS NOT NULL
+    DROP VIEW gold.dim_status;
+GO
 
-create view gold.dim_location as
+CREATE VIEW gold.dim_status AS
+SELECT 
+    m.sk_crime_status_key AS status_key,
+    m.report_district_no AS reporting_district_number,
+    s.status_desc AS status
+FROM silver.crime_status AS m
+LEFT JOIN silver.status_table AS s
+    ON m.status_cd = s.status_cd;
+GO
 
-select
-	m.sk_location_key as location_key,
-	p.premis_desc as premise,
-	m.crime_location as crime_address,
-	cast(m.crime_lat as decimal(8,5)) as crime_address_latitude,
-	cast(m.crime_lon as decimal(8,5)) as crime_address_longitude
-from silver.location_table as m
-left join silver.premis_table as p
-on m.premis_cd = p.premis_cd
+-- ============================================
+--				DIMENSION: Location
+-- ============================================
 
--- victim profile
+IF OBJECT_ID('gold.dim_location', 'V') IS NOT NULL
+    DROP VIEW gold.dim_location;
+GO
 
-create view gold.dim_victim_profile as 
+CREATE VIEW gold.dim_location AS
+SELECT
+    m.sk_location_key AS location_key,
+    p.premis_desc AS premise,
+    m.crime_location AS crime_address,
+    CAST(m.crime_lat AS DECIMAL(8, 5)) AS crime_address_latitude,
+    CAST(m.crime_lon AS DECIMAL(8, 5)) AS crime_address_longitude
+FROM silver.location_table AS m
+LEFT JOIN silver.premis_table AS p
+    ON m.premis_cd = p.premis_cd;
+GO
 
-select 
-	m.sk_victim_profile_key as victim_profile_key,
-	m.vict_age as victim_age,
-	m.vict_sex as victim_sex,
-	v.vict_descent_desc as victim_descent
-from silver.crime_victim_profile m
-left join silver.victim_table v
-on m.vict_descent = v.vict_descent
+-- ============================================
+--			DIMENSION: Victim Profile
+-- ============================================
 
--- fact crime event
+IF OBJECT_ID('gold.dim_victim_profile', 'V') IS NOT NULL
+    DROP VIEW gold.dim_victim_profile;
+GO
 
-create view gold.fact_crime_event as 
+CREATE VIEW gold.dim_victim_profile AS
+SELECT 
+    m.sk_victim_profile_key AS victim_profile_key,
+    m.vict_age AS victim_age,
+    m.vict_sex AS victim_sex,
+    v.vict_descent_desc AS victim_descent
+FROM silver.crime_victim_profile AS m
+LEFT JOIN silver.victim_table AS v
+    ON m.vict_descent = v.vict_descent;
+GO
 
-select
-	row_number() over (order by dr_no, date_reported) as crime_key,
-	m.dr_no,
-	m.date_reported,
-	m.date_occurred,
-	m.time_occurred,
-	a.area_name as area,
-	m.sk_location_key as location_key,
-	m.sk_crime_method_key as method_key,
-	m.sk_victim_profile_key as victim_profile_key,
-	m.sk_crime_status_key as status_key
-from silver.crime_setting m
-left join silver.area_table a
-on m.area_id = a.area_id
+-- ============================================
+--				FACT: Crime Event
+-- ============================================
 
+IF OBJECT_ID('gold.fact_crime_event', 'V') IS NOT NULL
+    DROP VIEW gold.fact_crime_event;
+GO
+
+CREATE VIEW gold.fact_crime_event AS
+SELECT
+    ROW_NUMBER() OVER (ORDER BY m.dr_no, m.date_reported) AS crime_key,
+    m.dr_no,
+    m.date_reported,
+    m.date_occurred,
+    m.time_occurred,
+    a.area_name AS area,
+    m.sk_location_key AS location_key,
+    m.sk_crime_method_key AS method_key,
+    m.sk_victim_profile_key AS victim_profile_key,
+    m.sk_crime_status_key AS status_key
+FROM silver.crime_setting AS m
+LEFT JOIN silver.area_table AS a
+    ON m.area_id = a.area_id;
+GO
