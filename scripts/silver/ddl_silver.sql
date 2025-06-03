@@ -153,6 +153,19 @@ CREATE TABLE silver.weapon_table (
 
 GO
 
+-- Create Part Table
+IF OBJECT_ID('silver.part_table', 'U') IS NOT NULL
+	DROP TABLE silver.part_table;
+GO
+
+CREATE TABLE silver.part_table (
+	part					INT,
+	part_name				NVARCHAR(150),
+	category				NVARCHAR(150)
+);
+
+GO
+
 -- Crime Victim Profile
 
 IF OBJECT_ID('silver.crime_victim_profile', 'U') IS NOT NULL
