@@ -166,5 +166,17 @@ group by year(date_occurred), l.crime_address) s
 where ranking < 11
 order by year, number_of_crimes desc
 
--- status 
-select distinct status_description from gold.dim_status
+-- status by reporting district number
+select 
+	year(date_occurred) as year,
+	reporting_district_number,
+	status_description,
+	count(crime_key) as number_
+from gold.fact_crime_event m
+left join gold.dim_status s
+on m.status_key = s.status_key
+group by 
+	year(date_occurred), 
+	reporting_district_number,
+	status_description
+order by year(date_occurred), reporting_district_number, count(crime_key) desc 
