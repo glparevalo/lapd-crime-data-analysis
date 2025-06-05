@@ -100,7 +100,7 @@ BEGIN
 				ELSE premis_desc
 			END AS premis_desc,
             ISNULL(weapon_used_cd, 0),
-            ISNULL(UPPER(TRIM(weapon_desc)), 'N/A') AS weapon_desc,
+            ISNULL(UPPER(TRIM(weapon_desc)), 'UNKNOWN WEAPON/OTHER WEAPON') AS weapon_desc,
             ISNULL(UPPER(TRIM(status_cd)), 'N/A') AS status_cd,
             CASE
                 WHEN UPPER(TRIM(status_cd)) = 'CC' and status_desc = 'UNK' THEN 'Case Closed'
