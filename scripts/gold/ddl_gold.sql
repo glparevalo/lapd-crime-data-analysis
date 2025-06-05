@@ -59,16 +59,13 @@ IF OBJECT_ID('gold.dim_location', 'V') IS NOT NULL
     DROP VIEW gold.dim_location;
 GO
 
-CREATE VIEW gold.dim_location AS
-SELECT
-    m.sk_location_key AS location_key,
-    p.premis_desc AS premise,
-    m.crime_location AS crime_address,
-    CAST(m.crime_lat AS DECIMAL(8, 5)) AS crime_address_latitude,
-    CAST(m.crime_lon AS DECIMAL(8, 5)) AS crime_address_longitude
-FROM silver.location_table AS m
-LEFT JOIN silver.premis_table AS p
-    ON m.premis_cd = p.premis_cd;
+CREATE TABLE gold.dim_location(
+	location_key	            INT,
+	premise			            NVARCHAR(150),
+	crime_address	            NVARCHAR(150),
+	crime_address_latitude		DECIMAL(8,5),
+	crime_address_longitude		DECIMAL(8,5)
+)
 GO
 
 -- ============================================
