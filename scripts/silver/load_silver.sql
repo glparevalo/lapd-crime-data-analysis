@@ -15,14 +15,13 @@ Loading the Silver Table:
 =============================================================================
 */
 
-
 CREATE OR ALTER PROCEDURE silver.load_silver AS
 BEGIN
     DECLARE 
-        @start_time DATETIME = GETDATE();
-	    @end_time DATETIME = GETDATE();
-	    @batch_start_time DATETIME = GETDATE();
-        @section_start_time DATETIME;
+        @start_time DATETIME = GETDATE(),
+	    @end_time DATETIME = GETDATE(),
+	    @batch_start_time DATETIME = GETDATE(),
+        @section_start_time DATETIME,
         @section_end_time DATETIME;
 
     PRINT '==============================================';
@@ -34,7 +33,7 @@ BEGIN
         -- ================================================
         --              Load Flat Silver Table
         -- ================================================
-
+		PRINT(' ');
         PRINT '========== Flat Silver Table ==========';
         -- Set start time to measure the processing time
         SET @start_time = GETDATE();
@@ -133,7 +132,7 @@ BEGIN
 
 		SET @end_time = GETDATE();
         PRINT('Completed silver.lapd_crime_database in ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds.');
-
+		PRINT(' ');
         -- ================================================
         --              Load Location Table
         -- ================================================
@@ -169,6 +168,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.location_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --                Load Area Table
@@ -194,6 +194,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.area_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --              Load Premise Table
@@ -219,6 +220,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.premis_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --               Load Weapon Table
@@ -244,6 +246,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.weapon_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --                Load Crime Table
@@ -269,6 +272,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
 		-- ================================================
         --               Load Victim Table
@@ -315,6 +319,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --            Load Crime Method Table
@@ -348,6 +353,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_method in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --                  Load Part Table
@@ -382,7 +388,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.part_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
-
+		PRINT(' ');
 
         -- ================================================
         --          Load Crime Victim Profile
@@ -417,6 +423,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_victim_profile in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --               Load Status Table
@@ -443,6 +450,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.status_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --           Load Crime Status Table
@@ -470,6 +478,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_status in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --            Load Crime Setting Table
@@ -524,6 +533,7 @@ BEGIN
 
         SET @section_end_time = GETDATE();
         PRINT 'Completed silver.crime_setting in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+		PRINT(' ');
 
         -- ================================================
         --              Final Batch Summary
