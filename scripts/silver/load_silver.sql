@@ -1,6 +1,6 @@
 /*
 =============================================================================
-					Load Silver: Load the Silver Table
+			Load Silver: Load the Silver Table
 =============================================================================
 
 Loading the Silver Table:
@@ -274,7 +274,7 @@ BEGIN
         PRINT 'Completed silver.crime_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
 		PRINT(' ');
 
-		-- ================================================
+	-- ================================================
         --               Load Victim Table
         -- ================================================
 
