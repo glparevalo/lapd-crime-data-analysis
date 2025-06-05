@@ -27,20 +27,13 @@ IF OBJECT_ID('gold.dim_method', 'V') IS NOT NULL
     DROP VIEW gold.dim_method;
 GO
 
-CREATE VIEW gold.dim_method AS
-SELECT
-    m.sk_crime_method_key AS method_key,
-    p.part_name AS part,
-    p.category AS part_category,
-    c.crime_desc AS crime,
-    w.weapon_used_desc AS weapon_used
-FROM silver.crime_method AS m
-LEFT JOIN silver.crime_table AS c
-    ON m.crime_cd = c.crime_cd
-LEFT JOIN silver.weapon_table AS w
-    ON m.weapon_used_cd = w.weapon_used_cd
-LEFT JOIN silver.part_table AS p
-    ON m.part = p.part;
+create table gold.dim_method(
+	method_key				INT,
+	part					NVARCHAR(150),
+	category				NVARCHAR(150),
+	crime					NVARCHAR(150),
+	weapon_used				NVARCHAR(150)
+);
 GO
 
 -- ============================================
