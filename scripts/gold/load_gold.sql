@@ -71,7 +71,7 @@ BEGIN
         PRINT ' ';
 
         -- ================================================
-        --					Load Status Table
+        --		Load Status Table
         -- ================================================
         PRINT '========== Status Table (Dim) ==========';
         SET @start_time = GETDATE();
@@ -97,7 +97,7 @@ BEGIN
         PRINT ' ';
 
         -- ================================================
-        --				  Load Method Table
+        --		Load Method Table
         -- ================================================
         PRINT '========== Method Table (Dim) ==========';
         SET @start_time = GETDATE();
