@@ -27,7 +27,7 @@ IF OBJECT_ID('gold.dim_method', 'V') IS NOT NULL
     DROP VIEW gold.dim_method;
 GO
 
-create table gold.dim_method(
+CREATE TABLE gold.dim_method(
 	method_key				INT,
 	part					NVARCHAR(150),
 	category				NVARCHAR(150),
@@ -44,14 +44,11 @@ IF OBJECT_ID('gold.dim_status', 'V') IS NOT NULL
     DROP VIEW gold.dim_status;
 GO
 
-CREATE VIEW gold.dim_status AS
-SELECT 
-    m.sk_crime_status_key AS status_key,
-    m.report_district_no AS reporting_district_number,
-    s.status_desc AS status
-FROM silver.crime_status AS m
-LEFT JOIN silver.status_table AS s
-    ON m.status_cd = s.status_cd;
+CREATE TABLE gold.dim_status(
+	status_key				        INT,
+	reporting_district_number	    INT,
+	status_description		        NVARCHAR(150)
+)
 GO
 
 -- ============================================
