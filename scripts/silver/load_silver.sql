@@ -18,29 +18,31 @@ Loading the Silver Table:
 
 CREATE OR ALTER PROCEDURE silver.load_silver AS
 BEGIN
-    DECLARE @start_time DATETIME = GETDATE();
-	DECLARE @end_time DATETIME = GETDATE();
-	DECLARE @batch_start_time DATETIME = GETDATE();
-    DECLARE @section_start_time DATETIME;
-    DECLARE @section_end_time DATETIME;
+    DECLARE 
+        @start_time DATETIME = GETDATE();
+	    @end_time DATETIME = GETDATE();
+	    @batch_start_time DATETIME = GETDATE();
+        @section_start_time DATETIME;
+        @section_end_time DATETIME;
 
     PRINT '==============================================';
-    PRINT '       STARTING SILVER LAYER NORMALIZATION     ';
+    PRINT '       STARTING SILVER LAYER LOADING          ';
     PRINT '==============================================';
-
+    
     BEGIN TRY
 
-        PRINT'==========================================';
-        PRINT('		     Loading Silver Table           ');
-        PRINT'==========================================';
+        -- ================================================
+        --              Load Flat Silver Table
+        -- ================================================
 
+        PRINT '========== Flat Silver Table ==========';
         -- Set start time to measure the processing time
         SET @start_time = GETDATE();
 
+        PRINT('> Truncating silver.lapd_crime_database...');
         TRUNCATE TABLE silver.lapd_crime_database;
-        PRINT('Truncating silver.lapd_crime_database...');
-
-        PRINT('Inserting data into silver.lapd_crime_database...');
+        
+        PRINT('> Inserting data into silver.lapd_crime_database...');
         INSERT INTO silver.lapd_crime_database (
             dr_no,
             date_reported,
@@ -130,15 +132,20 @@ BEGIN
         FROM bronze.lapd_crime_database;
 
 		SET @end_time = GETDATE();
-        PRINT('Done processing ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds');
+        PRINT('Completed silver.lapd_crime_database in ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds.');
 
         -- ================================================
         --              Load Location Table
         -- ================================================
-        PRINT 'Starting load: silver.location_table';
+        
+        PRINT '========== Silver Location Table ==========';
+
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.location_table...');
         TRUNCATE TABLE silver.location_table;
+
+        PRINT('> Inserting data into silver.location_table...');
         INSERT INTO silver.location_table (
             sk_location_key, 
             premis_cd, 
@@ -166,10 +173,15 @@ BEGIN
         -- ================================================
         --                Load Area Table
         -- ================================================
-        PRINT 'Starting load: silver.area_table';
+        
+        PRINT '========== Area Table ==========';
+
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.area_table...');
         TRUNCATE TABLE silver.area_table;
+
+        PRINT('> Inserting data into silver.area_table...');
         INSERT INTO silver.area_table (
             area_id, 
             area_name
@@ -186,10 +198,15 @@ BEGIN
         -- ================================================
         --              Load Premise Table
         -- ================================================
-        PRINT 'Starting load: silver.premis_table';
+        
+        PRINT '========== Premise Table ==========';
+
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.premis_table...');
         TRUNCATE TABLE silver.premis_table;
+
+        PRINT('> Inserting data into silver.premis_table...');
         INSERT INTO silver.premis_table (
             premis_cd, 
             premis_desc
@@ -206,10 +223,15 @@ BEGIN
         -- ================================================
         --               Load Weapon Table
         -- ================================================
-        PRINT 'Starting load: silver.weapon_table';
+        
+        PRINT '========== Weapon Table ==========';
+
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.weapon_table...');
         TRUNCATE TABLE silver.weapon_table;
+
+        PRINT('> Inserting data into silver.weapon_table...');
         INSERT INTO silver.weapon_table (
             weapon_used_cd, 
             weapon_used_desc
@@ -226,10 +248,15 @@ BEGIN
         -- ================================================
         --                Load Crime Table
         -- ================================================
-        PRINT 'Starting load: silver.crime_table';
+
+        PRINT '========== Crime Table ==========';
+
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.crime_table...');
         TRUNCATE TABLE silver.crime_table;
+
+        PRINT('> Inserting data into silver.crime_table...');
         INSERT INTO silver.crime_table (
             crime_cd, 
             crime_desc
@@ -246,10 +273,15 @@ BEGIN
 		-- ================================================
         --               Load Victim Table
         -- ================================================
-        PRINT 'Starting load: silver.victim_table';
+
+        PRINT '========== Victim Table ==========';        
+        
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.victim_table...');
         TRUNCATE TABLE silver.victim_table;
+
+        PRINT('> Inserting data into silver.victim_table...');
         INSERT INTO silver.victim_table (
             vict_descent, 
             vict_descent_desc
@@ -287,10 +319,15 @@ BEGIN
         -- ================================================
         --            Load Crime Method Table
         -- ================================================
-        PRINT 'Starting load: silver.crime_method';
+        
+        PRINT '========== Crime Method Table ==========';
+        
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.crime_method...');
         TRUNCATE TABLE silver.crime_method;
+
+        PRINT('> Inserting data into silver.crime_method...');
         INSERT INTO silver.crime_method (
             sk_crime_method_key, 
             part, 
@@ -313,12 +350,17 @@ BEGIN
         PRINT 'Completed silver.crime_method in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
 
         -- ================================================
-        --            Load Part Table
+        --                  Load Part Table
         -- ================================================
-        PRINT 'Starting load: silver.part_table';
+
+        PRINT '========== Part Table ==========';
+        
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.part_table...');
         TRUNCATE TABLE silver.part_table;
+
+        PRINT('> Inserting data into silver.part_table...');
         INSERT INTO silver.part_table (
             part,
 	        part_name,
@@ -339,16 +381,21 @@ BEGIN
         FROM silver.lapd_crime_database
 
         SET @section_end_time = GETDATE();
-        PRINT 'Completed silver.crime_method in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
+        PRINT 'Completed silver.part_table in ' + CAST(DATEDIFF(SECOND, @section_start_time, @section_end_time) AS NVARCHAR) + ' seconds.';
 
 
         -- ================================================
         --          Load Crime Victim Profile
         -- ================================================
-        PRINT 'Starting load: silver.crime_victim_profile';
+        
+        PRINT '========== Crime Victim Profile Table ==========';
+
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.crime_victim_profile...');
         TRUNCATE TABLE silver.crime_victim_profile;
+
+        PRINT('> Inserting data into silver.crime_victim_profile...');
         INSERT INTO silver.crime_victim_profile (
             sk_victim_profile_key, 
             vict_age, 
@@ -374,10 +421,17 @@ BEGIN
         -- ================================================
         --               Load Status Table
         -- ================================================
-        PRINT 'Starting load: silver.status_table';
+
+        PRINT '========== Premise Table ==========';
+        
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.status_table...');
+
         TRUNCATE TABLE silver.status_table;
+
+        PRINT('> Inserting data into silver.status_table...');
+
         INSERT INTO silver.status_table (
             status_cd, 
             status_desc
@@ -393,10 +447,15 @@ BEGIN
         -- ================================================
         --           Load Crime Status Table
         -- ================================================
-        PRINT 'Starting load: silver.crime_status';
+
+        PRINT '========== Crime Status Table ==========';
+        
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.crime_status...');
         TRUNCATE TABLE silver.crime_status;
+
+        PRINT('> Inserting data into silver.crime_status...');
         INSERT INTO silver.crime_status (
             sk_crime_status_key, 
             report_district_no, 
@@ -415,10 +474,15 @@ BEGIN
         -- ================================================
         --            Load Crime Setting Table
         -- ================================================
-        PRINT 'Starting load: silver.crime_setting';
+       
+        PRINT '========== Crime Setting Table ==========';
+        
         SET @section_start_time = GETDATE();
 
+        PRINT('> Truncating silver.crime_setting...');
         TRUNCATE TABLE silver.crime_setting;
+
+        PRINT('> Inserting data into silver.crime_setting...');
         INSERT INTO silver.crime_setting (
             dr_no, 
             date_reported, 
