@@ -1,7 +1,7 @@
 /*
-=============================================================================
-					DDL Silver: Create the Silver Table
-=============================================================================
+================================================================================
+		    DDL Silver: Create the Silver Table
+================================================================================
 
 Silver Flat Table:
 	This script is used to create the silver table which consists of the  
@@ -12,7 +12,7 @@ Silver Flat Table:
 3NF Tables:
 	After normalizing, this script also creates the split tables.
 
-=============================================================================
+================================================================================
 */
 
 -- Silver LAPD Crime Database
@@ -22,14 +22,14 @@ IF OBJECT_ID('silver.lapd_crime_database', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.lapd_crime_database (
-    dr_no					INT,
+    dr_no				INT,
     date_reported			DATE,
     date_occurred			DATE,
     time_occurred			TIME(0),
-    area_id					INT,
+    area_id				INT,
     area_name				NVARCHAR(150),
-    report_district_no		INT,
-    part					INT,
+    report_district_no			INT,
+    part				INT,
     crime_cd				INT,
     crime_cd_desc			NVARCHAR(150),
             
@@ -52,7 +52,7 @@ GO
 
 /*
 ==========================================================
-						3NF Tables 
+			3NF Tables 
 ==========================================================
 
 */
@@ -65,11 +65,11 @@ IF OBJECT_ID('silver.crime_setting', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.crime_setting (
-	dr_no					INT PRIMARY KEY,
+	dr_no				INT PRIMARY KEY,
 	date_reported			DATE,
 	date_occurred			DATE,
 	time_occurred			TIME(0), 
-	area					INT,
+	area				INT,
 	sk_location_key			INT
 );
 
@@ -81,8 +81,8 @@ IF OBJECT_ID('silver.area_table', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.area_table (
-	area					INT,
-	area_name				NVARCHAR(150),
+	area				INT,
+	area_name			NVARCHAR(150),
 );
 
 GO
@@ -93,9 +93,9 @@ IF OBJECT_ID('silver.location_table', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.location_table (
-        sk_location_key		INT	PRIMARY KEY,
+        sk_location_key			INT PRIMARY KEY,
         premis_cd			INT,
-        crime_location		NVARCHAR(150),
+        crime_location			NVARCHAR(150),
         crime_lat			NVARCHAR(150),
         crime_lon			NVARCHAR(150)
 );
@@ -108,8 +108,8 @@ IF OBJECT_ID('silver.premis_table', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.premis_table (
-	premis_cd				INT,
-	premis_desc				NVARCHAR(150),
+	premis_cd			INT,
+	premis_desc			NVARCHAR(150),
 );
 
 GO
@@ -122,8 +122,8 @@ GO
 
 create table silver.crime_method(
 	sk_crime_method_key		int primary key,
-	part 					int,
-	crime_cd 				int,
+	part 				int,
+	crime_cd 			int,
 	weapon_used_cd 			int
 )
 
@@ -134,8 +134,8 @@ IF OBJECT_ID('silver.crime_table', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.crime_table (
-	crime_cd				INT,
-	crime_desc				NVARCHAR(150)
+	crime_cd			INT,
+	crime_desc			NVARCHAR(150)
 );
 
 GO
@@ -159,9 +159,9 @@ IF OBJECT_ID('silver.part_table', 'U') IS NOT NULL
 GO
 
 CREATE TABLE silver.part_table (
-	part					INT,
-	part_name				NVARCHAR(150),
-	category				NVARCHAR(150)
+	part				INT,
+	part_name			NVARCHAR(150),
+	category			NVARCHAR(150)
 );
 
 GO
@@ -174,8 +174,8 @@ GO
 
 CREATE TABLE silver.crime_victim_profile (
 	sk_victim_profile_key	INT PRIMARY KEY,
-	vict_age				INT,
-	vict_sex				NVARCHAR(150),
+	vict_age			INT,
+	vict_sex			NVARCHAR(150),
 	vict_descent			NVARCHAR(150),
 );
 
@@ -201,7 +201,7 @@ GO
 create table silver.crime_status(
 	sk_crime_status_key		INT PRIMARY KEY,
 	report_district_no		INT,
-	status_cd				NVARCHAR(150)
+	status_cd			NVARCHAR(150)
 )
 
 -- Create Status Table
@@ -210,7 +210,7 @@ IF OBJECT_ID('silver.status_table', 'U') IS NOT NULL
 GO
 
 create table silver.status_table(
-	status_cd	NVARCHAR(150) PRIMARY KEY,
-	status_desc	NVARCHAR(150)
+	status_cd		NVARCHAR(150) PRIMARY KEY,
+	status_desc		NVARCHAR(150)
 )
 
