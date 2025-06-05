@@ -76,15 +76,12 @@ IF OBJECT_ID('gold.dim_victim_profile', 'V') IS NOT NULL
     DROP VIEW gold.dim_victim_profile;
 GO
 
-CREATE VIEW gold.dim_victim_profile AS
-SELECT 
-    m.sk_victim_profile_key AS victim_profile_key,
-    m.vict_age AS victim_age,
-    m.vict_sex AS victim_sex,
-    v.vict_descent_desc AS victim_descent
-FROM silver.crime_victim_profile AS m
-LEFT JOIN silver.victim_table AS v
-    ON m.vict_descent = v.vict_descent;
+CREATE TABLE gold.dim_victim_profile(
+	victim_profile_key		INT,
+	victim_age				INT,
+	victim_sex				NVARCHAR(50),
+	victim_descent			NVARCHAR(150)
+)
 GO
 
 -- ============================================
