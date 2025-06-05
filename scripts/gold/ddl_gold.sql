@@ -92,19 +92,16 @@ IF OBJECT_ID('gold.fact_crime_event', 'V') IS NOT NULL
     DROP VIEW gold.fact_crime_event;
 GO
 
-CREATE VIEW gold.fact_crime_event AS
-SELECT
-    ROW_NUMBER() OVER (ORDER BY m.dr_no, m.date_reported) AS crime_key,
-    m.dr_no,
-    m.date_reported,
-    m.date_occurred,
-    m.time_occurred,
-    a.area_name AS area,
-    m.sk_location_key AS location_key,
-    m.sk_crime_method_key AS method_key,
-    m.sk_victim_profile_key AS victim_profile_key,
-    m.sk_crime_status_key AS status_key
-FROM silver.crime_setting AS m
-LEFT JOIN silver.area_table AS a
-    ON m.area_id = a.area_id;
+CREATE TABLE gold.fact_crime_event(
+	crime_key			INT,
+	dr_no				INT,
+	date_reported		DATE,
+	date_occurred		DATE,
+	time_occurred		TIME(0),
+	area				NVARCHAR(150),
+	location_key		INT,
+	method_key			INT,
+	victim_profile_key	INT,
+	status_key			INT
+)
 GO
