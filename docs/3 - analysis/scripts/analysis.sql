@@ -5,13 +5,15 @@ IF OBJECT_ID('views.vw_crimes_per_date', 'V') IS NOT NULL
     DROP VIEW views.vw_crimes_per_date;
 GO
 
-CREATE VIEW views.vw_crimes_per_date AS
+CREATE VIEW views.vw_crimes_per_date AS 
 SELECT
     YEAR(date_occurred) AS year,
-    MONTH(date_occurred) AS month,
+	month(date_occurred) as month_num,
+	DATENAME(month, date_occurred) as month, 
     COUNT(crime_key) AS number_of_crimes
 FROM gold.fact_crime_event
-GROUP BY YEAR(date_occurred), MONTH(date_occurred);
+WHERE YEAR(date_occurred) <> 2025
+GROUP BY YEAR(date_occurred), DATENAME(month, date_occurred), month(date_occurred)
 GO
 
 -- ============================================
@@ -27,7 +29,8 @@ SELECT
     area,
     COUNT(crime_key) AS number_of_crimes
 FROM gold.fact_crime_event
-GROUP BY YEAR(date_occurred), area;
+GROUP BY YEAR(date_occurred), area
+HAVING YEAR(date_occurred) <> 2025;
 GO
 
 -- ============================================
@@ -44,7 +47,8 @@ SELECT
     COUNT(m.crime_key) AS number_of_crimes
 FROM gold.fact_crime_event AS m
 LEFT JOIN gold.dim_location l ON m.location_key = l.location_key
-GROUP BY YEAR(m.date_occurred), l.premise;
+GROUP BY YEAR(m.date_occurred), l.premise
+HAVING YEAR(date_occurred) <> 2025;
 GO
 
 -- ============================================
@@ -62,7 +66,8 @@ SELECT
     COUNT(f.crime_key) AS number_of_crimes
 FROM gold.fact_crime_event AS f
 LEFT JOIN gold.dim_method AS m ON f.method_key = m.method_key
-GROUP BY YEAR(f.date_occurred), m.crime, m.weapon_used;
+GROUP BY YEAR(f.date_occurred), m.crime, m.weapon_used
+HAVING YEAR(date_occurred) <> 2025;
 GO
 
 -- ============================================
@@ -80,7 +85,8 @@ SELECT
     COUNT(f.crime_key) AS number_of_crimes
 FROM gold.fact_crime_event AS f
 LEFT JOIN gold.dim_method AS m ON f.method_key = m.method_key
-GROUP BY YEAR(f.date_occurred), m.part, m.category;
+GROUP BY YEAR(f.date_occurred), m.part, m.category
+HAVING YEAR(date_occurred) <> 2025;
 GO
 
 -- ============================================
@@ -90,7 +96,7 @@ IF OBJECT_ID('views.vw_crimes_by_victim_age', 'V') IS NOT NULL
     DROP VIEW views.vw_crimes_by_victim_age;
 GO
 
-CREATE VIEW views.vw_crimes_by_victim_age_group AS
+CREATE VIEW views.vw_crimes_by_victim_age AS
 SELECT 
     *
 FROM (
@@ -118,7 +124,7 @@ FROM (
     WHERE age_group IS NOT NULL
     GROUP BY year, age_group, crime
 ) final
-WHERE ranking <= 10;
+WHERE ranking <= 10 AND year <> 2025
 GO
 
 -- ============================================
@@ -133,6 +139,7 @@ SELECT
     *
 FROM (
     SELECT 
+		YEAR(date_occurred) as year,
         v.victim_sex,
         m.crime,
         COUNT(f.crime_key) AS number_of_crimes,
@@ -140,7 +147,8 @@ FROM (
     FROM gold.fact_crime_event f
     LEFT JOIN gold.dim_method m ON f.method_key = m.method_key
     LEFT JOIN gold.dim_victim_profile v ON f.victim_profile_key = v.victim_profile_key
-    GROUP BY v.victim_sex, m.crime
+	WHERE YEAR(date_occurred) <> 2025
+    GROUP BY YEAR(date_occurred), v.victim_sex, m.crime
 ) final
 WHERE ranking <= 10 AND UPPER(victim_sex) IN ('MALE', 'FEMALE');
 GO
@@ -160,7 +168,8 @@ SELECT
     COUNT(f.crime_key) AS number_of_crimes
 FROM gold.fact_crime_event f
 LEFT JOIN gold.dim_victim_profile v ON f.victim_profile_key = v.victim_profile_key
-GROUP BY f.area, v.victim_descent, YEAR(f.date_occurred);
+GROUP BY f.area, v.victim_descent, YEAR(f.date_occurred)
+HAVING YEAR(f.date_occurred) <> 2025;
 GO
 
 -- ============================================
@@ -188,7 +197,8 @@ FROM (
     LEFT JOIN gold.dim_location l ON f.location_key = l.location_key
     WHERE l.crime_address_latitude <> 0 AND l.crime_address_longitude <> 0
 ) sub
-GROUP BY year, area;
+GROUP BY year, area
+HAVING year <> 2025;
 GO
 
 -- ============================================
@@ -211,7 +221,7 @@ FROM (
     LEFT JOIN gold.dim_location l ON f.location_key = l.location_key
     GROUP BY YEAR(f.date_occurred), l.crime_address
 ) sub
-WHERE ranking <= 10;
+WHERE ranking <= 10 AND year <> 2025;
 GO
 
 -- ============================================
@@ -229,5 +239,6 @@ SELECT
     COUNT(f.crime_key) AS number_of_crimes
 FROM gold.fact_crime_event f
 LEFT JOIN gold.dim_status s ON f.status_key = s.status_key
-GROUP BY YEAR(f.date_occurred), s.reporting_district_number, s.status_description;
+GROUP BY YEAR(f.date_occurred), s.reporting_district_number, s.status_description
+HAVING YEAR(f.date_occurred) <> 2025;
 GO
