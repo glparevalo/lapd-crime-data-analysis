@@ -101,3 +101,105 @@ select distinct
 	END as premis_desc
 from silver.norm_lapd_crime_data
 order by premis_cd
+
+
+/*
+===================================================
+				crime methods
+===================================================
+*/
+
+create table silver.dim_method(
+	sk_method_key		INT,
+	part				INT,
+	crime_cd			INT,
+	mo_code				NVARCHAR(200),
+	weapon_used_cd		INT
+)
+
+INSERT INTO silver.dim_method(
+sk_method_key,
+part,
+crime_cd,
+mo_code,
+weapon_used_cd
+)
+select
+	row_number() over (order by part, crime_cd) as sk_method_key,
+	part,
+	crime_cd,
+	mo_code,
+	weapon_used_cd
+FROM
+(
+select distinct
+	part,
+	crime_cd,
+	-- crime_cd_desc, / no longer needed
+	case
+		when mo_codes = 'No MO Codes' then '0'
+		else mo_codes
+	end as mo_code,
+	weapon_used_cd
+from silver.norm_lapd_crime_data) a
+
+-- crime part
+
+create table silver.sub_dim_part(
+	part	INT,
+	part_name	NVARCHAR(200),
+	part_category	NVARCHAR(200)
+)
+
+INSERT INTO silver.sub_dim_part(
+part,
+part_name,
+part_category
+)
+
+select distinct
+	part,
+    CASE	
+		WHEN part = 1 THEN 'Part I Crimes'
+		WHEN part = 2 THEN 'Part II Crimes'
+		ELSE 'N/A'
+    END AS part_name,
+    CASE	
+		WHEN part = 1 THEN 'Serious Index Crime'
+		WHEN part = 2 THEN 'Other / Non-Index Crime'
+		ELSE 'Uncategorized' 
+	END AS part_category
+from silver.norm_lapd_crime_data
+
+-- crime code
+create table silver.sub_dim_crime(
+	crime_cd		INT,
+	CRIME_CD_DESC	nvarchar(200)
+)
+
+insert into silver.sub_dim_crime(
+	crime_cd,
+	crime_cd_desc
+)
+
+select distinct
+	crime_cd,
+	crime_cd_desc
+from silver.norm_lapd_crime_data
+order by crime_cd
+
+-- weapon
+create table silver.sub_dim_weapon(
+	weapon_used_cd			INT,
+	weapon_desc		NVARCHAR(200)
+)
+
+INSERT INTO silver.sub_dim_weapon(
+	weapon_used_cd,
+	weapon_desc
+)
+select distinct
+	weapon_used_cd,
+	weapon_desc
+from silver.norm_lapd_crime_data
+order by weapon_used_cd  
