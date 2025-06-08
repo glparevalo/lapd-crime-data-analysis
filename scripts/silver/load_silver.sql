@@ -42,17 +42,18 @@ BEGIN
         TRUNCATE TABLE silver.lapd_crime_database;
         
         PRINT('> Inserting data into silver.lapd_crime_database...');
-        INSERT INTO silver.lapd_crime_database (
+        INSERT INTO silver.lapd_crime_data (
             dr_no,
             date_reported,
             date_occurred,
             time_occurred,
-            area_id,
+            area,
             area_name,
             report_district_no,
             part,
             crime_cd,
             crime_cd_desc,
+			mo_codes,
             vict_age,
             vict_sex,
             vict_descent,
@@ -71,22 +72,26 @@ BEGIN
             dr_no,
             date_reported,
             date_occurred,
-            cast(time_occurred AS TIME(0)) AS time_occurred,
+            time_occurred,
             area AS area_id,
-            UPPER(TRIM(area_name)) AS area_name,
+            case
+				when UPPER(TRIM(area_name)) = 'N HOLLYWOOD' THEN 'NORTH HOLLYWOOD'
+				ELSE UPPER(TRIM(area_name))
+			END AS area_name,
             report_district_no,
             part,
             crime_cd,
-            REPLACE(REPLACE(UPPER(TRIM(crime_cd_desc)), ';', ': '), '  ',' ') AS crime_cd_desc,
+            UPPER(TRIM(crime_cd_desc)) AS crime_cd_desc,
+			TRIM(mo_codes),
             CASE 
                 WHEN vict_age < 0 THEN ABS(vict_age)
                 ELSE vict_age 
             END as vict_age,
             CASE
-                WHEN UPPER(TRIM(vict_sex)) = 'H' THEN 'Other'
+                WHEN UPPER(TRIM(vict_sex)) = 'H' THEN 'OTHER'
                 WHEN UPPER(TRIM(vict_sex)) = '-' or UPPER(TRIM(vict_sex)) = 'X' or UPPER(TRIM(vict_sex)) IS NULL THEN 'N/A'
-                WHEN UPPER(TRIM(vict_sex)) = 'M' THEN 'Male'
-                WHEN UPPER(TRIM(vict_sex)) = 'F' THEN 'Female'
+                WHEN UPPER(TRIM(vict_sex)) = 'M' THEN 'MALE'
+                WHEN UPPER(TRIM(vict_sex)) = 'F' THEN 'FEMALE'
                 ELSE UPPER(TRIM(vict_sex))
             END AS vict_sex,
             CASE	
@@ -128,7 +133,7 @@ BEGIN
 				END) AS crime_location,
 			ISNULL(CAST(cast(crime_lat as decimal(8,5)) AS nvarchar(150)), '0') AS crime_lat,
             ISNULL(CAST(cast(crime_lon as decimal(8,5)) AS nvarchar(150)), '0') AS crime_lon
-        FROM bronze.lapd_crime_database;
+        FROM bronze.lapd_crime_data;
 
 		SET @end_time = GETDATE();
         PRINT('Completed silver.lapd_crime_database in ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds.');
