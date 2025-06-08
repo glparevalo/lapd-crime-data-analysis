@@ -1,0 +1,18 @@
+CREATE VIEW gold.fact_crime_specifics AS
+select 
+	sk_report_key as report_key,
+	dr_no,
+	date_reported,
+	t.date_occurred,
+	t.time_occurred,
+	report_district_no,
+	s.status_desc as report_status,
+	sk_method_key as method_key,
+	sk_location_key as location_key,
+	sk_vict_key as victim_key
+FROM silver.fact_specifics m
+left join silver.dim_time t
+on m.sk_time_key = t.sk_time_key
+
+left join silver.dim_status s
+on m.status_cd = s.status_cd
