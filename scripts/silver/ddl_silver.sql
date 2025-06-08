@@ -50,6 +50,42 @@ CREATE TABLE silver.lapd_crime_data (
 
 GO
 
+-- 1NF Silver
+
+IF OBJECT_ID('silver.norm_lapd_crime_data', 'U') IS NOT NULL
+    DROP TABLE silver.norm_lapd_crime_data;
+
+GO
+
+create table silver.norm_lapd_crime_data(
+	dr_no					INT,
+	date_reported			date,
+	date_occurred			date,
+	time_occurred			time(0),
+	area					INT,
+	area_name				NVARCHAR(200),
+	report_district_no		INT,
+	part					INT,
+	crime_cd				INT,
+	crime_cd_desc			NVARCHAR(200),
+	mo_codes				NVARCHAR(200),
+	vict_age				INT,
+	vict_sex				NVARCHAR(200),
+	vict_descent			NVARCHAR(200),
+	premis_cd				INT,
+	premis_desc				NVARCHAR(200),
+	weapon_used_cd			INT,
+	weapon_desc				NVARCHAR(200),
+	status_cd				NVARCHAR(200),
+	status_desc				NVARCHAR(200),
+	crime_location			NVARCHAR(200),
+	crime_lat				DECIMAL(8,5),
+	crime_lon				DECIMAL(8,5)
+)
+
+
+
+
 /*
 ==========================================================
 			3NF Tables 
