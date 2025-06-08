@@ -121,14 +121,12 @@ INSERT INTO silver.dim_method(
 sk_method_key,
 part,
 crime_cd,
-mo_code,
 weapon_used_cd
 )
 select
 	row_number() over (order by part, crime_cd) as sk_method_key,
 	part,
 	crime_cd,
-	mo_code,
 	weapon_used_cd
 FROM
 (
@@ -136,10 +134,6 @@ select distinct
 	part,
 	crime_cd,
 	-- crime_cd_desc, / no longer needed
-	case
-		when mo_codes = 'No MO Codes' then '0'
-		else mo_codes
-	end as mo_code,
 	weapon_used_cd
 from silver.norm_lapd_crime_data) a
 
@@ -277,3 +271,142 @@ select distinct
 	END AS vict_descent_desc
 from silver.norm_lapd_crime_data
 
+/*
+===================================================
+				fact crime specifics
+===================================================
+*/
+
+create table silver.fact_specifics(
+	dr_no					INT,
+	report_district_no		INT,
+	date_reported			DATE,
+	status_cd				NVARCHAR(200),
+	sk_time_key				INT,
+	sk_location_key			INT,
+	sk_method_key			INT,
+	sk_vict_key				INT
+)
+
+with cte as(
+select 
+	l.sk_location_key,
+	l.area,
+	l.premis_cd,
+	l.sk_address_key,
+	a.crime_address,
+	a.crime_lat,
+	a.crime_lon
+from silver.dim_location l 
+left join silver.sub_dim_address a
+ON l.SK_ADDRESS_key = a.sk_address_key)
+
+INSERT INTO silver.fact_specifics(
+dr_no,
+report_district_no,
+date_reported,
+status_cd,
+sk_time_key,
+sk_location_key,
+sk_method_key,
+sk_vict_key
+)
+
+select distinct
+	dr_no,
+	report_district_no,
+	date_reported,
+	status_cd,
+	t.sk_time_key,
+	a.sk_location_key,
+	d.sk_method_key,
+	v.sk_vict_key
+FROM silver.norm_lapd_crime_data m
+LEFT JOIN silver.dim_time t
+ON m.date_occurred = t.date_occurred
+AND	m.time_occurred = t.time_occurred
+-- where t.sk_time_key is null
+
+left join cte a
+on m.area = a.area
+and m.premis_cd = a.premis_cd
+and m.crime_location = a.crime_address
+and m.crime_lat = a.crime_lat
+and m.crime_lon = a.crime_lon
+
+
+left join silver.dim_method d
+ON m.part = d.part
+AND m.crime_cd = d.crime_cd
+AND m.weapon_used_cd = d.weapon_used_cd
+
+
+left join silver.dim_victim_profile v
+on m.vict_age = v.vict_age
+and m.vict_sex =v.vict_sex
+and m.vict_descent = v.vict_descent
+
+select * from SILVER.fact_specifics
+
+-- status
+create table silver.dim_status(
+	status_cd		nvarchar(200),
+	status_desc		NVARCHAR(200)
+)
+
+INSERT INTO silver.dim_status(
+	status_cd,
+	status_desc
+)
+select distinct
+	status_cd,
+	case
+		when status_cd = 'CC' then 'UNKNOWN'
+		ELSE UPPER(TRIM(STATUS_DESC))
+	END AS status_desc
+from silver.norm_lapd_crime_data
+
+
+-- crime time
+create table silver.dim_time(
+	sk_time_key		INT,
+	date_occurred	DATE,
+	time_occurred	TIME(0)
+)
+
+insert into silver.dim_time(
+	sk_time_key		,
+	date_occurred	,
+	time_occurred	
+)
+
+select
+	ROW_NUMBER() over (order by date_occurred, time_occurred) as sk_time_key,
+	date_occurred,
+	time_occurred
+FROM 
+(select distinct
+	date_occurred,
+	time_occurred
+from silver.norm_lapd_crime_data) a
+order by sk_time_key
+
+-- dim mo code
+
+-- crime specifics
+create table silver.dim_mo_code(
+	dr_no			INT,
+	mo_code			NVARCHAR(200)
+)
+
+INSERT INTO silver.dim_mo_code(
+	dr_no,
+	mo_code
+)
+select distinct
+	dr_no,
+	case
+		when mo_codes = 'No MO Codes' then 'NO MO CODE DISCLOSED'
+		else mo_codes
+	end as mo_code
+from silver.norm_lapd_crime_data
