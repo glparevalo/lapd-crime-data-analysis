@@ -94,7 +94,7 @@ on m.vict_descent = d.vict_descent
 
 create or alter view gold.dim_location as
 select
-	m.sk_location_key,
+	m.sk_location_key as location_key,
 	a.area_name as crime_area,
 	p.premis_desc as crime_premise,
 	ad.crime_address,
