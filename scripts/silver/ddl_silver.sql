@@ -79,8 +79,8 @@ create table silver.norm_lapd_crime_data(
 	status_cd				NVARCHAR(200),
 	status_desc				NVARCHAR(200),
 	crime_location			NVARCHAR(200),
-	crime_lat				DECIMAL(8,5),
-	crime_lon				DECIMAL(8,5)
+	crime_lat				NVARCHAR(200),
+	crime_lon				NVARCHAR(200)
 )
 
 
