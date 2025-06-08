@@ -16,23 +16,23 @@ Silver Flat Table:
 */
 
 -- Silver LAPD Crime Database
-IF OBJECT_ID('silver.lapd_crime_database', 'U') IS NOT NULL
-    DROP TABLE silver.lapd_crime_database;
+IF OBJECT_ID('silver.lapd_crime_data', 'U') IS NOT NULL
+    DROP TABLE silver.lapd_crime_data;
 
 GO
 
-CREATE TABLE silver.lapd_crime_database (
-    dr_no				INT,
+CREATE TABLE silver.lapd_crime_data (
+    dr_no					INT,
     date_reported			DATE,
     date_occurred			DATE,
     time_occurred			TIME(0),
-    area_id				INT,
+    area_id					INT,
     area_name				NVARCHAR(150),
-    report_district_no			INT,
-    part				INT,
+    report_district_no		INT,
+    part					INT,
     crime_cd				INT,
     crime_cd_desc			NVARCHAR(150),
-            
+    mo_codes				NVARCHAR(150),   
     vict_age				INT,
     vict_sex				NVARCHAR(150),
     vict_descent			NVARCHAR(150),
