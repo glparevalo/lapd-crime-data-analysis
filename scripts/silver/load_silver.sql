@@ -38,10 +38,10 @@ BEGIN
         -- Set start time to measure the processing time
         SET @start_time = GETDATE();
 
-        PRINT('> Truncating silver.lapd_crime_database...');
+        PRINT('> Truncating silver.lapd_crime_data...');
         TRUNCATE TABLE silver.lapd_crime_database;
         
-        PRINT('> Inserting data into silver.lapd_crime_database...');
+        PRINT('> Inserting data into silver.lapd_crime_data...');
         INSERT INTO silver.lapd_crime_data (
             dr_no,
             date_reported,
@@ -136,8 +136,67 @@ BEGIN
         FROM bronze.lapd_crime_data;
 
 		SET @end_time = GETDATE();
-        PRINT('Completed silver.lapd_crime_database in ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds.');
+        PRINT('Completed silver.lapd_crime_data in ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds.');
 		PRINT(' ');
+
+        -- ================================================
+        --              FIRST NORMAL FORM
+        -- ================================================
+
+        TRUNCATE TABLE silver.lapd_crime_database;
+        INSERT INTO silver.norm_lapd_crime_data (
+            dr_no,
+            date_reported,
+            date_occurred,
+            time_occurred,
+            area,
+            area_name,
+            report_district_no,
+            part,
+            crime_cd,
+            crime_cd_desc,
+            mo_codes,
+            vict_age,
+            vict_sex,
+            vict_descent,
+            premis_cd,
+            premis_desc,
+            weapon_used_cd,
+            weapon_desc,
+            status_cd,
+            status_desc,
+            crime_location,
+            crime_lat,
+            crime_lon
+        )
+        SELECT
+            l.dr_no,
+            l.date_reported,
+            l.date_occurred,
+            l.time_occurred,
+            l.area,
+            l.area_name,
+            l.report_district_no,
+            l.part,
+            l.crime_cd,
+            l.crime_cd_desc,
+            -- If mo_codes exist, use the trimmed value; else 'No MO Codes'
+            COALESCE(NULLIF(TRIM(s.value), ''), 'No MO Codes') AS mo_codes,
+            vict_age,
+            l.vict_sex,
+            l.vict_descent,
+            premis_cd,
+            l.premis_desc,
+            l.weapon_used_cd,
+            l.weapon_desc,
+            l.status_cd,
+            status_desc,
+            l.crime_location,
+            l.crime_lat,
+            l.crime_lon
+        FROM silver.lapd_crime_data l
+        OUTER APPLY STRING_SPLIT(l.mo_codes, ' ') s;
+
         -- ================================================
         --              Load Location Table
         -- ================================================
