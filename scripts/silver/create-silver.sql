@@ -203,3 +203,77 @@ select distinct
 	weapon_desc
 from silver.norm_lapd_crime_data
 order by weapon_used_cd  
+
+
+/*
+===================================================
+				crime victim profile
+===================================================
+*/
+
+-- vcitim profile
+create table silver.dim_victim_profile(
+	sk_vict_key		INT,
+	vict_age		INT,
+	Vict_sex		NVARCHAR(200),
+	vict_descent	NVARCHAR(200)
+)
+
+INSERT INTO silver.dim_victim_profile(
+sk_vict_key,
+vict_age,
+Vict_sex,
+vict_descent
+)
+
+select
+	row_number() over (order by vict_age) as sk_vict_key,
+	vict_age,
+	vict_sex,
+	vict_descent
+FROM
+(select distinct
+	vict_age,
+	vict_sex,
+	vict_descent
+from silver.norm_lapd_crime_data) a
+
+-- victim descent
+
+create table silver.sub_dim_descent(
+	vict_descent		NVARCHAR(200),
+	vict_descent_desc	NVARCHAR(200)
+)
+
+INSERT INTO silver.sub_dim_descent(
+vict_descent,
+vict_descent_desc
+)
+
+-- descent
+select distinct
+	vict_descent,
+	CASE UPPER(TRIM(vict_descent))
+		WHEN 'A' THEN 'Other Asian'
+		WHEN 'B' THEN 'Black'
+		WHEN 'C' THEN 'Chinese'
+		WHEN 'D' THEN 'Cambodian'
+		WHEN 'F' THEN 'Filipino'
+		WHEN 'G' THEN 'Guamanian'
+		WHEN 'H' THEN 'Hispanic/Latin/Mexican'
+		WHEN 'I' THEN 'American Indian/Alaskan Native'
+		WHEN 'J' THEN 'Japanese'
+		WHEN 'K' THEN 'Korean'
+		WHEN 'L' THEN 'Laotian'
+		WHEN 'O' THEN 'Other'
+		WHEN 'P' THEN 'Pacific Islander'
+		WHEN 'S' THEN 'Samoan'
+		WHEN 'U' THEN 'Hawaiian'
+		WHEN 'V' THEN 'Vietnamese'
+		WHEN 'W' THEN 'White'
+		WHEN 'X' THEN 'Unknown'
+		WHEN 'Z' THEN 'Asian Indian'
+		ELSE 'Uncategorized'
+	END AS vict_descent_desc
+from silver.norm_lapd_crime_data
+
