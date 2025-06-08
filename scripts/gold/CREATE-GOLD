@@ -1,3 +1,7 @@
+-- ==========================================================
+--              fact crime specifics
+-- ==========================================================
+
 CREATE VIEW gold.fact_crime_specifics AS
 select 
 	sk_report_key as report_key,
@@ -15,4 +19,29 @@ left join silver.dim_time t
 on m.sk_time_key = t.sk_time_key
 
 left join silver.dim_status s
-on m.status_cd = s.status_cd
+on m.status_cd = s.status_cd;
+GO
+
+-- ==========================================================
+--              dim method
+-- ==========================================================
+
+create view gold.dim_method as 
+select 
+	sk_method_key as method_key,
+	p.part_name as part,
+	p.part_category as category,
+	c.crime_cd_desc as crime_committed,
+	w.weapon_desc as weapon_used
+from silver.dim_method m
+left join silver.sub_dim_part p
+on m.part = p.part
+
+left join silver.sub_dim_crime c
+on m.crime_cd = c.crime_cd
+
+left join silver.sub_dim_weapon w
+on m.weapon_used_cd = w.weapon_used_cd;
+
+GO
+
