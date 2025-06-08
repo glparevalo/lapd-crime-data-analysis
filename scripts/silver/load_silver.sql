@@ -39,7 +39,7 @@ BEGIN
         SET @start_time = GETDATE();
 
         PRINT('> Truncating silver.lapd_crime_data...');
-        TRUNCATE TABLE silver.lapd_crime_database;
+        TRUNCATE TABLE silver.lapd_crime_data;
         
         PRINT('> Inserting data into silver.lapd_crime_data...');
         INSERT INTO silver.lapd_crime_data (
@@ -133,7 +133,8 @@ BEGIN
 				END) AS crime_location,
 			ISNULL(CAST(cast(crime_lat as decimal(8,5)) AS nvarchar(150)), '0') AS crime_lat,
             ISNULL(CAST(cast(crime_lon as decimal(8,5)) AS nvarchar(150)), '0') AS crime_lon
-        FROM bronze.lapd_crime_data;
+        FROM bronze.lapd_crime_data
+        WHERE YEAR(date_occurred) <> 2025;
 
 		SET @end_time = GETDATE();
         PRINT('Completed silver.lapd_crime_data in ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds.');
