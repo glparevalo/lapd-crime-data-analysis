@@ -56,5 +56,15 @@ select
 from silver.dim_mo_code
 
 -- ==========================================================
---              dim mo_code
+--              dim victim profile
 -- ==========================================================
+
+create view gold.dim_victim_profile as
+select 
+	sk_vict_key,
+	vict_age,
+	vict_sex,
+	UPPER(d.vict_descent_desc) as victim_descent
+from silver.dim_victim_profile m
+left join silver.sub_dim_descent d
+on m.vict_descent = d.vict_descent
