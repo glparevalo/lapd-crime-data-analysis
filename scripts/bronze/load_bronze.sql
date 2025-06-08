@@ -30,15 +30,16 @@ BEGIN
         -- Set start time to measure the processing time
         SET @start_time = GETDATE();
 
-        TRUNCATE TABLE bronze.lapd_crime_database;
-        PRINT('Truncating bronze.lapd_crime_database...');
+        TRUNCATE TABLE bronze.lapd_crime_data;
+        PRINT('Truncating bronze.lapd_crime_data...');
 
-        PRINT('Inserting data into bronze.lapd_crime_database...');
-        BULK INSERT bronze.lapd_crime_database
-        FROM 'C:\lapd_crime_dataset_cleaned.csv'
+        PRINT('Inserting data into bronze.lapd_crime_data...');
+        BULK INSERT bronze.lapd_crime_data
+        FROM 'C:\output_pipe.txt'
         WITH (
             FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
+            FIELDTERMINATOR = '|',
+			ROWTERMINATOR = '\n',
 			CODEPAGE = '65001',
             TABLOCK
         );
