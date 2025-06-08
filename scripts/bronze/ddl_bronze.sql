@@ -12,33 +12,33 @@ Bronze Table:
 =============================================================================
 */
 
-IF OBJECT_ID('bronze.lapd_crime_database', 'U') IS NOT NULL
-	DROP TABLE bronze.lapd_crime_database;
+IF OBJECT_ID('bronze.lapd_crime_data', 'U') IS NOT NULL
+	DROP TABLE bronze.lapd_crime_data;
 GO
 
-CREATE TABLE bronze.lapd_crime_database (
+CREATE TABLE bronze.lapd_crime_data (
 	dr_no					INT,
 	date_reported			datetime,
 	date_occurred			date,
 	time_occurred			time,
 	area					INT,
-	area_name				NVARCHAR(50),
+	area_name				NVARCHAR(200),
 	report_district_no		INT,
 	part					INT,
 	crime_cd				INT,
-	crime_cd_desc			NVARCHAR(100),
-	mo_codes				NVARCHAR(50),
+	crime_cd_desc			NVARCHAR(200),
+	mo_codes				NVARCHAR(200),
 	vict_age				INT,
-	vict_sex				NVARCHAR(50),
-	vict_descent			NVARCHAR(50),
+	vict_sex				NVARCHAR(200),
+	vict_descent			NVARCHAR(200),
 	premis_cd				INT,
-	premis_desc				NVARCHAR(120),
+	premis_desc				NVARCHAR(200),
 	weapon_used_cd			INT,
-	weapon_desc				NVARCHAR(120),
-	status_cd				NVARCHAR(50),
-	status_desc				NVARCHAR(120),
-	crime_location			NVARCHAR(120),
-	cross_street			NVARCHAR(120),
-	crime_lat				FLOAT,
-	crime_lon				FLOAT
+	weapon_desc				NVARCHAR(200),
+	status_cd				NVARCHAR(200),
+	status_desc				NVARCHAR(200),
+	crime_location			NVARCHAR(200),
+	cross_street			NVARCHAR(200),
+	crime_lat				DECIMAL(8,5),
+	crime_lon				DECIMAL(8,5)
 );
