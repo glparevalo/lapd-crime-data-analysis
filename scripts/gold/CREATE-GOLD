@@ -2,13 +2,22 @@
 --              fact crime specifics
 -- ==========================================================
 
-CREATE VIEW gold.fact_crime_specifics AS
+CREATE OR ALTER VIEW gold.fact_crime_specifics AS
 select 
 	sk_report_key as report_key,
 	dr_no,
 	date_reported,
 	t.date_occurred,
 	t.time_occurred,
+	CASE 
+		WHEN time_occurred IS NULL THEN 'NO TIME DISCLOSED'
+		WHEN CAST(time_occurred AS TIME) BETWEEN '00:00:00' AND '05:59:59' THEN 'LATE NIGHT'
+		WHEN CAST(time_occurred AS TIME) BETWEEN '06:00:00' AND '11:59:59' THEN 'MORNING'
+		WHEN CAST(time_occurred AS TIME) BETWEEN '12:00:00' AND '17:59:59' THEN 'AFTERNOON'
+		WHEN CAST(time_occurred AS TIME) BETWEEN '18:00:00' AND '21:59:59' THEN 'EVENING'
+		WHEN CAST(time_occurred AS TIME) BETWEEN '22:00:00' AND '23:59:59' THEN 'NIGHT'
+		ELSE 'INVALID TIME'
+	END AS time_category,
 	report_district_no,
 	s.status_desc as report_status,
 	sk_method_key as method_key,
