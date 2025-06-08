@@ -78,3 +78,29 @@ select
 from silver.dim_victim_profile m
 left join silver.sub_dim_descent d
 on m.vict_descent = d.vict_descent
+
+-- ==========================================================
+--              dim crime location
+-- ==========================================================
+
+create or alter view gold.dim_location as
+select
+	m.sk_location_key,
+	a.area_name as crime_area,
+	p.premis_desc as crime_premise,
+	ad.crime_address,
+	ad.crime_lat as crime_latitude,
+	round(cast(ad.crime_lat as decimal(8,5)), 2) as rounded_latitude,
+	ad.crime_lon as crime_longitude,
+	round(cast(ad.crime_lon as decimal(8,5)), 2) as rounded_longitude
+from silver.dim_location m
+
+left join silver.sub_dim_premis p
+on m.premis_cd = p.premis_cd
+
+left join silver.sub_dim_area a
+on m.area = a.area
+
+left join silver.sub_dim_address ad
+on m.sk_address_key = ad.sk_address_key
+
