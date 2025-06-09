@@ -83,170 +83,197 @@ create table silver.norm_lapd_crime_data(
 	crime_lon				NVARCHAR(200)
 )
 
-
-
-
 /*
 ==========================================================
-			3NF Tables 
+				3NF Tables 
 ==========================================================
 
 */
 
--- =================== Crime Setting =====================
+-- =================== Dim: Crime Location =====================
 
--- Crime Setting
-IF OBJECT_ID('silver.crime_setting', 'U') IS NOT NULL
-	DROP TABLE silver.crime_setting;
+-- Dimension: Location
+IF OBJECT_ID('silver.dim_location', 'U') IS NOT NULL
+	DROP TABLE silver.dim_location;
 GO
 
-CREATE TABLE silver.crime_setting (
-	dr_no				INT PRIMARY KEY,
-	date_reported			DATE,
-	date_occurred			DATE,
-	time_occurred			TIME(0), 
+create table silver.dim_location(
+	sk_location_key		INT,
 	area				INT,
-	sk_location_key			INT
-);
-
-GO
-
--- Area Table
-IF OBJECT_ID('silver.area_table', 'U') IS NOT NULL
-	DROP TABLE silver.area_table;
-GO
-
-CREATE TABLE silver.area_table (
-	area				INT,
-	area_name			NVARCHAR(150),
-);
-
-GO
-
--- Location Table
-IF OBJECT_ID('silver.location_table', 'U') IS NOT NULL
-	DROP TABLE silver.location_table;
-GO
-
-CREATE TABLE silver.location_table (
-        sk_location_key			INT PRIMARY KEY,
-        premis_cd			INT,
-        crime_location			NVARCHAR(150),
-        crime_lat			NVARCHAR(150),
-        crime_lon			NVARCHAR(150)
-);
-
-GO
-
--- Premise Table
-IF OBJECT_ID('silver.premis_table', 'U') IS NOT NULL
-	DROP TABLE silver.premis_table;
-GO
-
-CREATE TABLE silver.premis_table (
 	premis_cd			INT,
-	premis_desc			NVARCHAR(150),
+	sk_address_key		INT
 );
 
 GO
 
--- =================== Crime Method =====================
-
-IF OBJECT_ID('silver.crime_method', 'U') IS NOT NULL
-	DROP TABLE silver.crime_method;
+-- Sub-dimension: Address
+IF OBJECT_ID('silver.sub_dim_address', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_address;
 GO
 
-create table silver.crime_method(
-	sk_crime_method_key		int primary key,
-	part 				int,
-	crime_cd 			int,
-	weapon_used_cd 			int
+create table silver.sub_dim_address (
+	sk_address_key		int,
+	crime_address		nvarchar(200),
+	crime_lat			nvarchar(200),
+	crime_lon			nvarchar(200)
+);
+
+GO
+
+-- Sub-dimension Area
+IF OBJECT_ID('silver.sub_dim_area', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_area;
+GO
+
+create table silver.sub_dim_area(
+	area		INT,
+	area_name	NVARCHAR(200)
+);
+
+GO
+
+-- Sub-dimension Area Premise
+IF OBJECT_ID('silver.sub_dim_premis', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_premis;
+GO
+
+create table silver.sub_dim_premis(
+	premis_cd		INT,
+	premis_desc		NVARCHAR(200)
 )
 
 GO
 
-IF OBJECT_ID('silver.crime_table', 'U') IS NOT NULL
-	DROP TABLE silver.crime_table;
+-- =================== Dim: Crime Method =====================
+
+-- Dimension: Method
+IF OBJECT_ID('silver.dim_method', 'U') IS NOT NULL
+	DROP TABLE silver.dim_method;
 GO
 
-CREATE TABLE silver.crime_table (
-	crime_cd			INT,
-	crime_desc			NVARCHAR(150)
-);
-
-GO
-
-
--- Create Weapon Table
-IF OBJECT_ID('silver.weapon_table', 'U') IS NOT NULL
-	DROP TABLE silver.weapon_table;
-GO
-
-CREATE TABLE silver.weapon_table (
-	weapon_used_cd			INT,
-	weapon_used_desc		NVARCHAR(150)
-);
-
-GO
-
--- Create Part Table
-IF OBJECT_ID('silver.part_table', 'U') IS NOT NULL
-	DROP TABLE silver.part_table;
-GO
-
-CREATE TABLE silver.part_table (
+create table silver.dim_method(
+	sk_method_key		INT,
 	part				INT,
-	part_name			NVARCHAR(150),
-	category			NVARCHAR(150)
+	crime_cd			INT,
+	weapon_used_cd		INT
 );
 
 GO
 
--- Crime Victim Profile
-
-IF OBJECT_ID('silver.crime_victim_profile', 'U') IS NOT NULL
-	DROP TABLE silver.crime_victim_profile;
+-- Sub-dimension: Part
+IF OBJECT_ID('silver.sub_dim_part', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_part;
 GO
 
-CREATE TABLE silver.crime_victim_profile (
-	sk_victim_profile_key	INT PRIMARY KEY,
-	vict_age			INT,
-	vict_sex			NVARCHAR(150),
-	vict_descent			NVARCHAR(150),
+create table silver.sub_dim_part(
+	part			INT,
+	part_name		NVARCHAR(200),
+	part_category	NVARCHAR(200)
 );
 
 GO
 
-IF OBJECT_ID('silver.victim_table', 'U') IS NOT NULL
-	DROP TABLE silver.victim_table;
+-- Sub-dimension: Part
+IF OBJECT_ID('silver.sub_dim_crime', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_crime;
 GO
 
-CREATE TABLE silver.victim_table (
-	vict_descent			NVARCHAR(150),
-	vict_descent_desc		NVARCHAR(150),
+create table silver.sub_dim_crime(
+	crime_cd		INT,
+	CRIME_CD_DESC	nvarchar(200)
 );
 
 GO
 
--- Crime Case Status
-
-IF OBJECT_ID('silver.crime_status', 'U') IS NOT NULL
-	DROP TABLE silver.crime_status;
+-- Sub-dimension: Weapon
+IF OBJECT_ID('silver.sub_dim_weapon', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_weapon;
 GO
 
-create table silver.crime_status(
-	sk_crime_status_key		INT PRIMARY KEY,
+create table silver.sub_dim_weapon(
+	weapon_used_cd		INT,
+	weapon_desc			NVARCHAR(200)
+);
+
+GO
+
+-- =================== Dim: Victim Profile =====================
+
+-- Dimension: Victim Profile
+IF OBJECT_ID('silver.dim_victim_profile', 'U') IS NOT NULL
+	DROP TABLE silver.dim_victim_profile;
+GO
+
+create table silver.dim_victim_profile(
+	sk_vict_key		INT,
+	vict_age		INT,
+	Vict_sex		NVARCHAR(200),
+	vict_descent	NVARCHAR(200)
+);
+
+GO
+
+-- Sub-dimension: Victim Descent
+IF OBJECT_ID('silver.sub_dim_descent', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_descent;
+GO
+
+create table silver.sub_dim_descent(
+	vict_descent		NVARCHAR(200),
+	vict_descent_desc	NVARCHAR(200)
+);
+
+GO
+
+-- =================== Dim: Status =====================
+IF OBJECT_ID('silver.dim_status', 'U') IS NOT NULL
+	DROP TABLE silver.dim_status;
+GO
+
+create table silver.dim_status(
+	status_cd		nvarchar(200),
+	status_desc		NVARCHAR(200)
+);
+
+GO
+
+-- =================== Dim: Crime Time =====================
+IF OBJECT_ID('silver.dim_time', 'U') IS NOT NULL
+	DROP TABLE silver.dim_time;
+GO
+
+create table silver.dim_time(
+	sk_time_key		INT,
+	date_occurred	DATE,
+	time_occurred	TIME(0)
+)
+
+GO
+
+-- =================== Dim: MO Codes =====================
+IF OBJECT_ID('silver.dim_mo_code', 'U') IS NOT NULL
+	DROP TABLE silver.dim_mo_code;
+GO
+
+create table silver.dim_mo_code(
+	dr_no			INT,
+	mo_code			NVARCHAR(200)
+)
+
+-- =================== Fact: Specifics =====================
+
+IF OBJECT_ID('silver.sub_dim_descent', 'U') IS NOT NULL
+	DROP TABLE silver.sub_dim_descent;
+GO
+
+create table silver.fact_specifics(
+	dr_no					INT,
 	report_district_no		INT,
-	status_cd			NVARCHAR(150)
-)
-
--- Create Status Table
-IF OBJECT_ID('silver.status_table', 'U') IS NOT NULL
-	DROP TABLE silver.status_table;
-GO
-
-create table silver.status_table(
-	status_cd		NVARCHAR(150) PRIMARY KEY,
-	status_desc		NVARCHAR(150)
-)
+	date_reported			DATE,
+	status_cd				NVARCHAR(200),
+	sk_time_key				INT,
+	sk_location_key			INT,
+	sk_method_key			INT,
+	sk_vict_key				INT
+);
 
