@@ -78,17 +78,6 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 
 --- 
 
-## 📁 Folder Structure
-
-lapd-crime-data-analysis
-├── data_sources/       # Data Sources
-├── docs/               # Documentations (diagrams and Power BI dashboard)
-├── scripts/            # Scripts for DDL and Loading Data
-├── LICENSE             # MIT License
-└── README.md           # Project documentation
-
----
-
 📌 Future Improvements
 
 - Integrate with Azure Data Factory for cloud-based ETL
