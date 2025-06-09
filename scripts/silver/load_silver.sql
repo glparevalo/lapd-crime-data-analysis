@@ -108,13 +108,13 @@ BEGIN
             ISNULL(UPPER(TRIM(weapon_desc)), 'UNKNOWN WEAPON/OTHER WEAPON') AS weapon_desc,
             ISNULL(UPPER(TRIM(status_cd)), 'N/A') AS status_cd,
             CASE
-                WHEN UPPER(TRIM(status_cd)) = 'CC' and status_desc = 'UNK' THEN 'Case Closed'
-                WHEN UPPER(TRIM(status_cd)) is null and status_desc = 'UNK' OR UPPER(TRIM(status_cd)) = 'N/A' THEN 'Unknown'
-                WHEN UPPER(TRIM(status_cd)) = 'JA' THEN 'Juvenile Arrest'
-                WHEN UPPER(TRIM(status_cd)) = 'JO' THEN 'Juvenile Other'
-                WHEN UPPER(TRIM(status_cd)) = 'AO' THEN 'Adult Other'
-                WHEN UPPER(TRIM(status_cd)) = 'AA' THEN 'Adult Arrest'
-                WHEN UPPER(TRIM(status_cd)) = 'IC' THEN 'Investigation Continued'
+                WHEN UPPER(TRIM(status_cd)) = 'CC' and status_desc = 'UNK' THEN 'UNKNOWN'
+                WHEN UPPER(TRIM(status_cd)) is null and status_desc = 'UNK' OR UPPER(TRIM(status_cd)) = 'N/A' THEN 'UNKNOWN'
+                WHEN UPPER(TRIM(status_cd)) = 'JA' THEN 'JUVENILE ARREST'
+                WHEN UPPER(TRIM(status_cd)) = 'JO' THEN 'JUVENILE OTHER'
+                WHEN UPPER(TRIM(status_cd)) = 'AO' THEN 'ADULT OTHER'
+                WHEN UPPER(TRIM(status_cd)) = 'AA' THEN 'ADULT ARREST'
+                WHEN UPPER(TRIM(status_cd)) = 'IC' THEN 'INVESTIGATION CONTINUED'
             END AS status_desc,
             TRIM(REPLACE(REPLACE(REPLACE(
                 REPLACE(REPLACE(REPLACE(
@@ -386,14 +386,14 @@ BEGIN
         select distinct
             part,
             CASE	
-                WHEN part = 1 THEN 'Part I Crimes'
-                WHEN part = 2 THEN 'Part II Crimes'
+                WHEN part = 1 THEN 'PART I CRIMES'
+                WHEN part = 2 THEN 'PART II CRIMES'
                 ELSE 'N/A'
             END AS part_name,
             CASE	
-                WHEN part = 1 THEN 'Serious Index Crime'
-                WHEN part = 2 THEN 'Other / Non-Index Crime'
-                ELSE 'Uncategorized' 
+                WHEN part = 1 THEN 'SERIOUS INDEX CRIME'
+                WHEN part = 2 THEN 'OTHER / NON-INDEX CRIME'
+                ELSE 'UNCATEGORIZED' 
             END AS part_category
         from silver.norm_lapd_crime_data
 
@@ -631,7 +631,6 @@ BEGIN
             from silver.dim_location l 
             left join silver.sub_dim_address a
             ON l.SK_ADDRESS_key = a.sk_address_key)
-        
         
         INSERT INTO silver.fact_specifics(
             dr_no,
