@@ -13,6 +13,8 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 | **Gold** | Business-ready views following star schema principles |
 | **Power BI** | Visual dashboard with trends, spatial insights, and time-based patterns |
 
+**Important**: This analysis considers data from 2020 to 2024 to prevent outliers, despite having data points for 2025.
+
 ---
 
 ## 🗂️ Data Sources
