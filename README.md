@@ -41,7 +41,7 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 
 ## 📊 Power BI Dashboard Preview
 
-![Power BI Dashboard](/docs/3 - analysis/dashboard-preview.png)  
+![Power BI Dashboard](https://raw.githubusercontent.com/your-username/your-repo/main/docs/3-analysis/dashboard-preview.png)
 *Visualizing crime heatmaps, top categories, time trends, and victim profiles*
 
 ---
