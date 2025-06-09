@@ -17,7 +17,6 @@ How to Use:
 =============================================================================
 */
 
-
 CREATE OR ALTER PROCEDURE bronze.load_bronze AS
 BEGIN
     DECLARE @start_time datetime, @end_time datetime;
