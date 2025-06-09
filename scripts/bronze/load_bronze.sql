@@ -1,6 +1,6 @@
 /* 
 =============================================================================
-						Loading the Bronze Table
+			Loading the Bronze Table
 =============================================================================
 
 Bronze Table:
@@ -23,7 +23,7 @@ BEGIN
     BEGIN TRY
 
         PRINT'==========================================';
-        PRINT('		     Loading Bronze Table           ');
+        PRINT('		 Loading Bronze Table           ');
         PRINT'==========================================';
 
         -- Set start time to measure the processing time
@@ -36,11 +36,11 @@ BEGIN
         BULK INSERT bronze.lapd_crime_data
         FROM 'C:\output_pipe.txt'
         WITH (
-            FIRSTROW = 2,
-            FIELDTERMINATOR = '|',
-			ROWTERMINATOR = '\n',
-			CODEPAGE = '65001',
-            TABLOCK
+           	FIRSTROW = 2,
+           	FIELDTERMINATOR = '|',
+		ROWTERMINATOR = '\n',
+		CODEPAGE = '65001',
+            	TABLOCK
         );
 
         SET @end_time = GETDATE();
