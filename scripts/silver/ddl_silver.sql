@@ -155,7 +155,6 @@ create table silver.dim_method(
 	sk_method_key		INT,
 	part				INT,
 	crime_cd			INT,
-	mo_code				NVARCHAR(200),
 	weapon_used_cd		INT
 );
 
@@ -226,19 +225,7 @@ create table silver.sub_dim_descent(
 
 GO
 
--- =================== Dim: Status Profile =====================
-IF OBJECT_ID('silver.dim_status', 'U') IS NOT NULL
-	DROP TABLE silver.dim_status;
-GO
-
-create table silver.dim_status(
-	status_cd		nvarchar(200),
-	status_desc		NVARCHAR(200)
-);
-
-GO
-
--- =================== Dim: Status Profile =====================
+-- =================== Dim: Status =====================
 IF OBJECT_ID('silver.dim_status', 'U') IS NOT NULL
 	DROP TABLE silver.dim_status;
 GO
@@ -263,7 +250,7 @@ create table silver.dim_time(
 
 GO
 
--- =================== Dim: Crime Time =====================
+-- =================== Dim: MO Codes =====================
 IF OBJECT_ID('silver.dim_mo_code', 'U') IS NOT NULL
 	DROP TABLE silver.dim_mo_code;
 GO
