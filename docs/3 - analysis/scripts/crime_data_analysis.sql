@@ -1,3 +1,18 @@
+/* 
+=============================================================================
+		      	Crime Data Analysis: Exploratory Data Analysis
+=============================================================================
+
+Purpose:
+	This script contains a compilation of various queries that can be used  
+	to create views and flat visualizations. This is more suited to see
+    immediate, tabular results that do not require much waiting time.
+
+	IMPORTANT: The views do not have a dedicated relationship and should
+               be used with discretion.
+=============================================================================
+*/
+
 -- ============================================
 --		Crimes per Year and Month
 -- ============================================
