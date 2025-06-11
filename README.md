@@ -83,6 +83,7 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 📌 Future Improvements
 
 - Integrate with Azure Data Factory for cloud-based ETL
+- Provide sophisticated technical documentation to support future developments
 - Deploy Power BI dashboard via app workspace
 - Add machine learning model to predict high-risk areas
 
