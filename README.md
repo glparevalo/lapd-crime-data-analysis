@@ -1,15 +1,15 @@
-# 🚓 LAPD Crime Data Analysis Project
+# LAPD Crime Data Analysis Project
 
 This project provides a complete end-to-end data pipeline and analytical workflow for processing, cleaning, normalizing, and visualizing LAPD crime data using SQL Server, Power BI, and a modern data warehouse approach.
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 | Layer | Description |
 |-------|-------------|
 | **Bronze** | Raw data ingested via bulk insert (.txt import) |
-| **Silver** | Cleaned and normalized tables following 3NF and snowflake schema principles |
+| **Silver** | Cleaned and normalized tables following 3NF Normalization principles |
 | **Gold** | Business-ready views following star schema principles |
 | **Power BI** | Visual dashboard with trends, spatial insights, and time-based patterns |
 
@@ -17,7 +17,7 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 
 ---
 
-## 🗂️ Data Sources
+## Data Sources
 
 - **Dataset**: Official LAPD Crime Data  
   [https://catalog.data.gov/dataset/crime-data-from-2020-to-present](https://catalog.data.gov/dataset/crime-data-from-2020-to-present)
@@ -29,39 +29,39 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 
 ---
 
-## 🧠 Key Features
+## Key Features
 
-- ✅ Full ETL pipeline with developed **SQL Server stored procedures**
-- ✅ Use of `STRING_SPLIT`, `CASE`, and surrogate keys
-- ✅ Data normalization into **dimension and fact tables**
-- ✅ **Power BI dashboard** with:
+- Full ETL pipeline with developed **SQL Server stored procedures**
+- Use of `STRING_SPLIT`, `CASE`, and surrogate keys
+- Data normalization into **dimension and fact tables**
+- **Power BI dashboard** with:
   - Crime trends by time of day, location, and victim demographics
   - Crime status breakdowns and high-risk areas
   - Top crime premises and reporting districts
 
 ---
 
-## 📊 Power BI Dashboard Preview
+## Power BI Dashboard Preview
 
 ![Power BI Dashboard](docs/dashboard-preview.png)
 *Visualizing crime heatmaps, top categories, time trends, and victim profiles*
 
 ---
 
-## 🧱 Schema Design
+## Data Modeling Approach
 
-### ❄️ Snowflake Schema
-- **Fact Table**: `silver.norm_fact_specifics` (each row = 1 crime incident/report)
+### 3NF Form
+- **Fact Table**: `silver.norm_fact_specifics` (grain: 1 row per crime report)
 - **Dimensions**:
   - `silver.dim_time`
   - `silver.dim_status`
   - `silver.dim_mo_code`
-  - `silver.dim_location` (+ sub-dimensions)
-  - `silver.dim_method` (+ sub-dimensions)
-  - `silver.dim_victim_profile` (+ sub-dimensions)
+  - `silver.dim_location`
+  - `silver.dim_method`
+  - `silver.dim_victim_profile` 
 
-### ⭐ Star Schema
-- **Fact Table**: `gold.fact_crime_specifics` (each row = 1 crime incident/report)
+### Star Schema
+- **Fact Table**: `gold.fact_crime_specifics` (grain: 1 row per crime report)
 - **Dimensions**:
   - `gold.dim-method`
   - `gold.dim_victim_profile`
@@ -70,7 +70,7 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 
 ---
 
-## 🚀 How to Use
+## How to Use
 
 1. Clone the repo
 2. Run the scripts in the `/scripts` folder to create tables, load data, and publish views.
@@ -80,16 +80,16 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 
 --- 
 
-📌 Future Improvements
+Future Improvements
 
-- Integrate with Azure Data Factory for cloud-based ETL
+- Integrate cloud-based ETL
 - Provide sophisticated technical documentation to support future developments
 - Deploy Power BI dashboard via app workspace
 - Add machine learning model to predict high-risk areas
 
 --- 
 
-📄 License
+## License
 
 This project is licensed under the MIT License.
 Data is publicly sourced from the City of Los Angeles Open Data Portal.
