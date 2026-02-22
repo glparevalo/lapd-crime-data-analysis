@@ -63,7 +63,7 @@ This project provides a complete end-to-end data pipeline and analytical workflo
 ### Star Schema
 - **Fact Table**: `gold.fact_crime_specifics` (grain: 1 row per crime report)
 - **Dimensions**:
-  - `gold.dim-method`
+  - `gold.dim_method`
   - `gold.dim_victim_profile`
   - `gold.dim_mo_code`
   - `gold.dim_location`
